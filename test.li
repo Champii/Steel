@@ -1,0 +1,6 @@
+toto = (a, b) ->
+  if a is b
+    b
+  else
+    b
+  b

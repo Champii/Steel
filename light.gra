@@ -1,0 +1,52 @@
+S: Statement+
+
+Block: !BracketBlock | Statement
+BracketBlock: %"\n"? %Spaces %"{" %"\n"? Statement* %Spaces %"}" %"\n"?
+
+Statement: %Spaces ControlStruct | Expression | %"\n" %Delimiter?
+Assignable: !Function | Operation | Literal | FunctionCall | VariableName
+Expression: VariableDeclaration | Return | !Assignable
+ControlStruct: Cond | Loop | Comment
+
+VariableName: %Letter %Alphanum*
+VariableDeclaration: VariableName %Spaces %"=" %Spaces !Assignable
+
+Function: FunctionExpression | ArrowFunction
+FunctionExpression: FunctionArguments? %Spaces "!"? %"->" !Block
+ArrowFunction: FunctionArguments? %Spaces "!"? %"~>" !Block
+
+FunctionArguments: %"(" %Spaces !FunctionArgument? %Spaces %")"
+FunctionArgument: VariableName !FunctionArgumentComa?
+FunctionArgumentComa: %Spaces %"," %Spaces !FunctionArgument
+
+FunctionCall: VariableName !ParensCall | !SpaceCall | !BangCall
+ParensCall: %"(" %Spaces CallArg? %Spaces %")"
+SpaceCall: %Spaces CallArg?
+BangCall: %"!"
+
+CallArg: !Assignable !CallArgComa?
+CallArgComa: %Spaces %"," %Spaces !CallArg
+
+Return: "return" %Spaces !Assignable
+
+Comment: %"#" %Character*
+Loop: %"for" | %"while" %Spaces !TestExpression
+Cond: %"if" %Spaces !TestExpression %Spaces Block %Spaces Else?
+Else: %"else" %Spaces Block
+
+TestExpression: Test
+Test: !Operand %Spaces TestOp %Spaces !Operand
+TestOp: "isnt" | "is"
+
+Operand: Literal | VariableName | FunctionCall
+Operation: !Operand %Spaces Operator %Spaces !Operation | !Operand
+Operator: "+" | "-" | "*" | "/"
+
+
+Literal: StringLiteral | NumericLiteral
+
+NumericLiteral: %Number
+StringLiteral: %"'" %Character* %"'"
+
+Spaces: " "*
+Delimiter: "\n"
