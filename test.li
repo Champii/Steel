@@ -1,6 +1,7 @@
-toto = (a, b) ->
-  if a is b
-    b
-  else
-    b
-  b
+toto: number -> number -> number
+toto = (a, b) -> a
+
+tata = (a: number, b: number) -> 1
+
+titi: number
+titi = 1

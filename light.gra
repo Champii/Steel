@@ -3,25 +3,32 @@ S: Statement+
 Block: !BracketBlock | Statement
 BracketBlock: %"\n"? %Spaces %"{" %"\n"? Statement* %Spaces %"}" %"\n"?
 
-Statement: %Spaces ControlStruct | Expression | %"\n" %Delimiter?
+
+Statement: %Spaces Class | ControlStruct | Expression | %"\n" %Delimiter?
 Assignable: !Function | Operation | Literal | FunctionCall | VariableName
-Expression: VariableDeclaration | Return | !Assignable
+Expression: Assignation | TypeAssignation | Return | !Assignable
 ControlStruct: Cond | Loop | Comment
 
 VariableName: %Letter %Alphanum*
-VariableDeclaration: VariableName %Spaces %"=" %Spaces !Assignable
+InlineTypeDeclaration: %Spaces ":" %Spaces Type
+Assignation: VariableName InlineTypeDeclaration? %Spaces %"=" %Spaces !Assignable
+TypeAssignation: VariableName %Spaces %":" %Spaces TypeExpression
+
+TypeExpression: Type %Spaces !FunctionTypeExpression?
+FunctionTypeExpression: %"->" %Spaces !TypeExpression
+Type: VariableName
 
 Function: FunctionExpression | ArrowFunction
 FunctionExpression: FunctionArguments? %Spaces "!"? %"->" !Block
 ArrowFunction: FunctionArguments? %Spaces "!"? %"~>" !Block
 
-FunctionArguments: %"(" %Spaces !FunctionArgument? %Spaces %")"
-FunctionArgument: VariableName !FunctionArgumentComa?
+FunctionArguments: %"(" %Spaces FunctionArgument? %Spaces %")"
+FunctionArgument: VariableName InlineTypeDeclaration? !FunctionArgumentComa?
 FunctionArgumentComa: %Spaces %"," %Spaces !FunctionArgument
 
 FunctionCall: VariableName !ParensCall | !SpaceCall | !BangCall
 ParensCall: %"(" %Spaces CallArg? %Spaces %")"
-SpaceCall: %Spaces CallArg?
+SpaceCall: %Spaces CallArg
 BangCall: %"!"
 
 CallArg: !Assignable !CallArgComa?
@@ -36,9 +43,9 @@ Else: %"else" %Spaces Block
 
 TestExpression: Test
 Test: !Operand %Spaces TestOp %Spaces !Operand
-TestOp: "isnt" | "is"
+TestOp: "!==" | "==="
 
-Operand: Literal | VariableName | FunctionCall
+Operand: Literal | FunctionCall | VariableName
 Operation: !Operand %Spaces Operator %Spaces !Operation | !Operand
 Operator: "+" | "-" | "*" | "/"
 
@@ -50,3 +57,10 @@ StringLiteral: %"'" %Character* %"'"
 
 Spaces: " "*
 Delimiter: "\n"
+
+Class: %"class" %Spaces VariableName %Spaces ClassBlock
+ClassBlock: %"\n"? %Spaces %"{" %"\n"? ClassStatement* %Spaces %"}" %"\n"?
+ClassStatement: %Spaces ClassMethodDeclaration | ClassPropertyDeclaration | %"\n" %Delimiter?
+ClassPropertyDeclaration: VariableName InlineTypeDeclaration?
+ClassMethodDeclaration: VariableName %Spaces %":" %Spaces ClassMethod
+ClassMethod: !Function

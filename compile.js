@@ -5,6 +5,8 @@ const ts    = require('typescript');
 const util  = require('util');
 
 const tokens = {}
+const variables = [];
+const types = {};
 
 let currentBlockIndent = 0;
 
@@ -20,6 +22,23 @@ let currentBlockIndent = 0;
 //   return `${text};\n`;
 // };
 
+tokens.TypeAssignation = (node) => {
+  const res = compile(node.children);
+
+  const variable = res.shift();
+  types[variable] = res[0];
+
+  // console.log(res);
+
+  return '';
+};
+
+tokens.TypeExpression = (node) => {
+  const res = compile(node.children);
+
+  return res;
+};
+
 tokens.Expression = (node) => {
   const res = compile(node.children);
 
@@ -32,10 +51,38 @@ tokens.Expression = (node) => {
   return `${text};\n`;
 };
 
-tokens.VariableDeclaration = (node) => {
-  const res = compile(node.children);
+const applyTypes = (type, node) => {
+  if (type.length === 1) {
+    return `:${type[0]}`;
+  }
 
-  return `const ${res.join(' = ')}`;
+  const argsNode = compile(node.findSymbol('FunctionArgument').children[0].children)[0];
+
+  const returnType = type.pop();
+
+  const argsTypes = argsNode.map((arg, i) => `${arg}:${type[i]}`);
+
+  return `:(${argsTypes}) => ${returnType}`;
+};
+
+tokens.Assignation = (node) => {
+  const res = compile(node.children);
+  let text = '';
+
+
+  if (!variables.includes(res[0])) {
+    text += 'let ';
+    variables.push(res[0]);
+  }
+
+  if (res[1][0] === ':') {
+    res[0] = `${res[0]}${res[1]}`;
+    res.splice(1, 1);
+  } else if (types[res[0]]) {
+    res[0] = `${res[0]}${applyTypes(types[res[0]], node)}`;
+  }
+
+  return `${text}${res.join(' = ')}`;
 };
 
 tokens.VariableName = (node) => {
@@ -67,6 +114,21 @@ tokens.FunctionArguments = (node) => {
   let res = compile(node.children);
 
   return `(${res.join(', ')})`;
+};
+
+tokens.FunctionArgument = (node) => {
+  let res = compile(node.children);
+  const arr = [];
+
+  res.forEach(arg => {
+    if (arg[0] === ':') {
+      arr[arr.length - 1] = `${arr[arr.length - 1]}${arg}`;
+    } else {
+      arr.push(arg);
+    }
+  });
+
+  return arr;
 };
 
 const functionManage = (node) => {
@@ -149,19 +211,61 @@ tokens.Test = (node) => {
 
 tokens.TestOp = (node) => {
   const res = compile(node.children);
-
-  if (res[0] === 'is') {
-    return '===';
-  } else if (res[0] === 'isnt') {
-    return '!==';
-  }
+  return res[0];
+  // if (res[0] === 'is') {
+  //   return '===';
+  // } else if (res[0] === 'isnt') {
+  //   return '!==';
+  // }
 }
 
 tokens.Return = (node) => {
   const res = compile(node.children);
 
-  return res.join('');
+  return res.join(' ');
 };
+
+tokens.Class = (node) => {
+  const res = compile(node.children);
+
+  return `class ${res.join(' ')}`;
+};
+
+tokens.ClassBlock = (node) => {
+  currentBlockIndent += 2;
+
+  let res = compile(node.children);
+
+  const indent = _.repeat(' ', currentBlockIndent);
+
+  currentBlockIndent -= 2;
+
+  res = res.map(text => `${indent}${text}`);
+
+  res.unshift('{\n');
+  res.push(`${_.repeat(' ', currentBlockIndent)}}`);
+
+  return res.join('')
+};
+
+tokens.ClassStatement = (node) => {
+  const res = compile(node.children);
+
+  return `${res.join('')}\n`;
+};
+
+tokens.ClassMethodDeclaration = (node) => {
+  const res = compile(node.children);
+  console.log(res);
+  return `${res.join('')}\n`;
+};
+
+tokens.ClassMethod = (node) => {
+  const res = compile(node.children);
+  console.log(res);
+  return `${res.join('')}\n`;
+};
+
 
 const compile = (nodes) => {
   if (!nodes.length) {

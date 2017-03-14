@@ -88,7 +88,7 @@ module.exports = (done) => {
         return reject(err);
       }
 
-      console.log('INSPECT AST', util.inspect(res, { depth: null }));
+      // console.log('INSPECT AST', util.inspect(res, { depth: null }));
       return resolve(res);
 
     });
