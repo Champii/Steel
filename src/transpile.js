@@ -1,17 +1,17 @@
 "use strict"
 
-const _     = require('lodash');
-const ts    = require('typescript');
-const util  = require('util');
+const _       = require('lodash');
+const ts      = require('typescript');
+const util    = require('util');
 
-const tokens = {}
-const variables = [];
-const types = {};
+let tokens    = {};
+let variables = [];
+let types     = {};
 
 let currentBlockIndent = 0;
 
 // tokens.Statement = (node) => {
-//   const res = compile(node.children);
+//   const res = transpile(node.children);
 
 //   const text = `${res.join('')}`;
 
@@ -23,7 +23,7 @@ let currentBlockIndent = 0;
 // };
 
 tokens.TypeAssignation = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   const variable = res.shift();
   types[variable] = res[0];
@@ -34,13 +34,13 @@ tokens.TypeAssignation = (node) => {
 };
 
 tokens.TypeExpression = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   return res;
 };
 
 tokens.Expression = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   const text = `${res.join('')}`;
 
@@ -56,7 +56,7 @@ const applyTypes = (type, node) => {
     return `:${type[0]}`;
   }
 
-  const argsNode = compile(node.findSymbol('FunctionArgument').children[0].children)[0];
+  const argsNode = transpile(node.findSymbol('FunctionArgument').children[0].children)[0];
 
   const returnType = type.pop();
 
@@ -66,7 +66,7 @@ const applyTypes = (type, node) => {
 };
 
 tokens.Assignation = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
   let text = '';
 
 
@@ -92,7 +92,7 @@ tokens.VariableName = (node) => {
 tokens.Block = (node) => {
   currentBlockIndent += 2;
 
-  let res = compile(node.children);
+  let res = transpile(node.children);
 
   const indent = _.repeat(' ', currentBlockIndent);
 
@@ -111,13 +111,13 @@ tokens.Literal = (node) => {
 };
 
 tokens.FunctionArguments = (node) => {
-  let res = compile(node.children);
+  let res = transpile(node.children);
 
   return `(${res.join(', ')})`;
 };
 
 tokens.FunctionArgument = (node) => {
-  let res = compile(node.children);
+  let res = transpile(node.children);
   const arr = [];
 
   res.forEach(arg => {
@@ -134,7 +134,7 @@ tokens.FunctionArgument = (node) => {
 const functionManage = (node) => {
   currentBlockIndent += 2;
 
-  let res = compile(node.children);
+  let res = transpile(node.children);
 
   let args = '()';
 
@@ -179,38 +179,38 @@ tokens.ArrowFunction = (node) => {
 };
 
 tokens.FunctionCall = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
   const variableName = res.shift();
 
   return `${variableName}(${res.join('')})`;
 };
 
 tokens.CallArg = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   return res.join(', ');
 };
 
 tokens.Cond = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   return `if ${res.join('')}\n`;
 }
 
 tokens.Else = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   return ` else ${res.join('')}\n`;
 }
 
 tokens.Test = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   return `(${res.join(' ')}) `;
 }
 
 tokens.TestOp = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
   return res[0];
   // if (res[0] === 'is') {
   //   return '===';
@@ -220,13 +220,13 @@ tokens.TestOp = (node) => {
 }
 
 tokens.Return = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   return res.join(' ');
 };
 
 tokens.Class = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   return `class ${res.join(' ')}`;
 };
@@ -234,7 +234,7 @@ tokens.Class = (node) => {
 tokens.ClassBlock = (node) => {
   currentBlockIndent += 2;
 
-  let res = compile(node.children);
+  let res = transpile(node.children);
 
   const indent = _.repeat(' ', currentBlockIndent);
 
@@ -249,25 +249,25 @@ tokens.ClassBlock = (node) => {
 };
 
 tokens.ClassStatement = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
 
   return `${res.join('')}\n`;
 };
 
 tokens.ClassMethodDeclaration = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
   console.log(res);
   return `${res.join('')}\n`;
 };
 
 tokens.ClassMethod = (node) => {
-  const res = compile(node.children);
+  const res = transpile(node.children);
   console.log(res);
   return `${res.join('')}\n`;
 };
 
 
-const compile = (nodes) => {
+const transpile = (nodes) => {
   if (!nodes.length) {
     return [];
   }
@@ -275,7 +275,6 @@ const compile = (nodes) => {
   return nodes
     .map(node => {
       const token = tokens[node.symbol];
-
       if (!node.symbol) {
         return node.literal;
       }
@@ -284,13 +283,16 @@ const compile = (nodes) => {
         return token(node);
       }
 
-      return compile(node.children).join('');
+      return transpile(node.children).join('');
     })
   ;
 };
 
-const _compile = (nodes) => {
-  return compile(nodes).join('');
+const _transpile = (ast) => {
+  variables = [];
+  types = {};
+
+  return transpile(ast.children).join('');
 };
 
-module.exports = _compile;
+module.exports = _transpile;

@@ -27,10 +27,10 @@ Inspired from LiveScript
 
 * Externalized type declaration
   ```livescript
-  foo: number
+  foo := number
   foo = 1
 
-  bar: number -> number -> number
+  bar := number -> number -> number
   bar = (a, b) -> a + b
   ```
 

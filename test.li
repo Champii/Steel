@@ -1,7 +1,4 @@
-toto: number -> number -> number
-toto = (a, b) -> a
-
-tata = (a: number, b: number) -> 1
-
-titi: number
-titi = 1
+if a === b
+  a
+else
+  b

@@ -4,18 +4,18 @@ Block: !BracketBlock | Statement
 BracketBlock: %"\n"? %Spaces %"{" %"\n"? Statement* %Spaces %"}" %"\n"?
 
 
-Statement: %Spaces Class | ControlStruct | Expression | %"\n" %Delimiter?
+Statement: %Spaces Class | ControlStruct | TypeAssignation | Expression | %"\n" %Delimiter?
 Assignable: !Function | Operation | Literal | FunctionCall | VariableName
-Expression: Assignation | TypeAssignation | Return | !Assignable
+Expression: Assignation | Return | !Assignable
 ControlStruct: Cond | Loop | Comment
 
 VariableName: %Letter %Alphanum*
 InlineTypeDeclaration: %Spaces ":" %Spaces Type
 Assignation: VariableName InlineTypeDeclaration? %Spaces %"=" %Spaces !Assignable
-TypeAssignation: VariableName %Spaces %":" %Spaces TypeExpression
+TypeAssignation: VariableName %Spaces %":=" %Spaces TypeExpression
 
-TypeExpression: Type %Spaces !FunctionTypeExpression?
-FunctionTypeExpression: %"->" %Spaces !TypeExpression
+TypeExpression: Type !FunctionTypeExpression?
+FunctionTypeExpression: %Spaces %"->" %Spaces !TypeExpression
 Type: VariableName
 
 Function: FunctionExpression | ArrowFunction
@@ -28,7 +28,7 @@ FunctionArgumentComa: %Spaces %"," %Spaces !FunctionArgument
 
 FunctionCall: VariableName !ParensCall | !SpaceCall | !BangCall
 ParensCall: %"(" %Spaces CallArg? %Spaces %")"
-SpaceCall: %Spaces CallArg
+SpaceCall: %" "+ CallArg
 BangCall: %"!"
 
 CallArg: !Assignable !CallArgComa?
