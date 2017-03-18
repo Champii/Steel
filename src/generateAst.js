@@ -26,8 +26,7 @@ const countTabs = (it) => {
 };
 
 const preprocessor = (input) => {
-  const instr = input.toString().split('\n');
-  const instrOrig = input.toString().split('\n');
+  const instrOrig = input.toString().split('\n').filter(val => val.length).concat(['']);
 
   let tabCount = 0;
   let i = 0;

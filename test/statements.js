@@ -28,7 +28,7 @@ let bar = function () {
 
   it('should not have semi-column on structures of control', () => {
     // @todo: check why is there a need of a terminating \n
-    const string = `if a === b
+    const string = `if a is b
   a
 else
   b

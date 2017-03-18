@@ -1,4 +1,7 @@
-if a === b
+a := number -> number -> number
+a = (a, b) -> 1
+b = 1 + 1 + a(1) + b b + 2
+if a! is b
   a
 else
-  b
+  a

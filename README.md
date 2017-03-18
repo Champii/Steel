@@ -102,7 +102,7 @@ Inspired from LiveScript
     a = a + 1
   ```
 
-* is / isnt (not working now, conflicting with space declarated function arguments)
+* is / isnt for === / !==
 * Arithmetic operations
 
 ## Exemples

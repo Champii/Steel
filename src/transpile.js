@@ -194,7 +194,9 @@ tokens.CallArg = (node) => {
 tokens.Cond = (node) => {
   const res = transpile(node.children);
 
-  return `if ${res.join('')}\n`;
+  const condition = res.shift();
+
+  return `if (${condition}) ${res.join('')}\n`;
 }
 
 tokens.Else = (node) => {
@@ -206,17 +208,17 @@ tokens.Else = (node) => {
 tokens.Test = (node) => {
   const res = transpile(node.children);
 
-  return `(${res.join(' ')}) `;
+  return `${res.join(' ')}`;
 }
 
 tokens.TestOp = (node) => {
   const res = transpile(node.children);
-  return res[0];
-  // if (res[0] === 'is') {
-  //   return '===';
-  // } else if (res[0] === 'isnt') {
-  //   return '!==';
-  // }
+  // return res[0];
+  if (res[0] === 'is') {
+    return '===';
+  } else if (res[0] === 'isnt') {
+    return '!==';
+  }
 }
 
 tokens.Return = (node) => {
