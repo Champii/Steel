@@ -70,7 +70,7 @@ tokens.Assignation = (node) => {
   let text = '';
 
 
-  if (!variables.includes(res[0])) {
+  if (!variables.includes(res[0]) && node.children[0].symbol !== 'ComputedProperty') {
     text += 'let ';
     variables.push(res[0]);
   }
@@ -138,7 +138,7 @@ const functionManage = (node) => {
 
   let args = '()';
 
-  if (res[0][0] === '(') {
+  if (res[0] && res[0][0] === '(') {
     args = res[0];
     res.shift();
   }
@@ -185,10 +185,38 @@ tokens.FunctionCall = (node) => {
   return `${variableName}(${res.join('')})`;
 };
 
+tokens.Call = (node) => {
+  const res = transpile(node.children);
+
+  return `(${res.join('')})`;
+};
+
 tokens.CallArg = (node) => {
   const res = transpile(node.children);
 
   return res.join(', ');
+};
+
+tokens.Object = (node) => {
+  const res = transpile(node.children);
+
+  return `{${res.join(',')}}`;
+};
+
+tokens.ComputedPropertiesDots = (node) => {
+  const res = transpile(node.children);
+
+  if (node.children[0].symbol === 'NumericComputedProperty') {
+    return `${res.join('')}`;
+  }
+
+  return `.${res.join('')}`;
+};
+
+tokens.NumericComputedProperty = (node) => {
+  const res = transpile(node.children);
+
+  return `[${node.literal}]`;
 };
 
 tokens.Cond = (node) => {
@@ -258,13 +286,13 @@ tokens.ClassStatement = (node) => {
 
 tokens.ClassMethodDeclaration = (node) => {
   const res = transpile(node.children);
-  console.log(res);
+
   return `${res.join('')}\n`;
 };
 
 tokens.ClassMethod = (node) => {
   const res = transpile(node.children);
-  console.log(res);
+
   return `${res.join('')}\n`;
 };
 

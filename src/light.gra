@@ -3,15 +3,32 @@ S: Statement+
 Block: !BracketBlock | Statement
 BracketBlock: %"\n"? %Spaces %"{" %"\n"? Statement* %Spaces %"}" %"\n"?
 
-Statement: %Spaces Class | ControlStruct | TypeAssignation | Expression %Delimiter*
-ControlStruct: Cond | Comment
+Statement: %Spaces %Comment | Class | ControlStruct | TypeAssignation | Expression %Delimiter*
+ControlStruct: Cond
 Expression: Assignation | Return | !Assignable
-Assignable: !Function | Operation | Test | Literal | FunctionCall | VariableName
+Assignable: !Function | Object | Operation | Test | Literal | ComputedProperty | FunctionCall | VariableName
+#Call: ComputedProperty | VariableName FunctionCall
+
+Object: %"{}" | !ObjectBlock | !ObjectProperties
+ObjectBlock: %"\n"? %Spaces %"{" %"\n"? ObjectPropertyLine* %Spaces %"}" %"\n"?
+ObjectProperties: ObjectProperty
+ObjectProperty: VariableName %Spaces ":" %Spaces !Assignable !ObjectPropertyComa?
+ObjectPropertyComa: %Spaces "," %Spaces !ObjectProperty
+ObjectPropertyLine: %Spaces VariableName %Spaces ":" %Spaces !Assignable %Spaces %","? %Spaces %"\n"?
+
+# Magic, do NOT touch
+ComputedProperty: Literal | FunctionCall | VariableName LineSpace? !PossibleComputedProperties
+PossibleComputedProperties: ComputedPropertiesDots | ComputedPropertiesBraces
+ComputedPropertiesBraces: "[" !ComputedPropertiesTypes "]" Call? !PossibleComputedProperties?
+ComputedPropertiesDots: %"." NumericComputedProperty | !ComputedPropertiesTypes Call? !PossibleComputedProperties?
+ComputedPropertiesTypes: Literal | ComputedProperty | FunctionCall | VariableName
+NumericComputedProperty: Number
+LineSpace: "\n"+ Spaces
 
 VariableName: !VariableNameIdentifier^Keyword
 VariableNameIdentifier: %Letter %Alphanum*
 InlineTypeDeclaration: %Spaces ":" %Spaces Type
-Assignation: VariableName InlineTypeDeclaration? %Spaces %"=" %Spaces !Assignable
+Assignation: ComputedProperty | VariableName InlineTypeDeclaration? %Spaces %"=" %Spaces !Assignable
 TypeAssignation: VariableName %Spaces %":=" %Spaces TypeExpression
 
 TypeExpression: Type !FunctionTypeExpression?
@@ -27,6 +44,7 @@ FunctionArgument: VariableName InlineTypeDeclaration? !FunctionArgumentComa?
 FunctionArgumentComa: %Spaces %"," %Spaces !FunctionArgument
 
 FunctionCall: VariableName !ParensCall | !SpaceCall | !BangCall
+Call: !ParensCall | !SpaceCall | !BangCall
 ParensCall: %"(" %Spaces CallArg? %Spaces %")"
 SpaceCall: %" "+ CallArg
 BangCall: %"!"
@@ -37,7 +55,9 @@ CallArgComa: %Spaces %"," %Spaces !CallArg
 
 Return: "return" %Spaces !Assignable
 
-Comment: %"#" %Character*
+Comment: %Spaces "#" CommentCharacter*
+CommentCharacter: Character | "'"
+
 Loop: %"for" | %"while" %Spaces !TestExpression
 Cond: %"if" %Spaces !Assignable %Spaces Block %Spaces Else?
 Else: %"else" %Spaces Block
@@ -50,9 +70,9 @@ Operand: Literal | FunctionCall | VariableName
 Operation: !Operand %Spaces Operator %Spaces !Operation | !Operand
 Operator: "+" | "-" | "*" | "/"
 
-Keyword: TestOp | "if" | "else" | "for" | "while" | "return"
+Keyword: TestOp | "if" | "else" | "for" | "while" | "return" %" "+
 
-Literal: StringLiteral | NumericLiteral
+Literal: !StringLiteral | !NumericLiteral
 
 NumericLiteral: %Number
 StringLiteral: %"'" %Character* %"'"

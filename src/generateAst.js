@@ -13,7 +13,7 @@ const countTabs = (it) => {
     return 0;
   }
 
-  while (i < it.length - 1) {
+  while (i < it.length - 1 && it[i] === ' ') {
     if (it[i] === ' ' && it[i + 1] === ' ')  {
       count++;
       i += 2;
@@ -35,7 +35,7 @@ const preprocessor = (input) => {
     const line = instrOrig[i];
     const newTabCount = countTabs(line);
 
-    if (tabCount < newTabCount) {
+    if (tabCount < newTabCount && instrOrig[i].trim()[0] !== '.') {
       instrOrig[i - 1] = instrOrig[i - 1] + ' {'
       tabCount = newTabCount
     } else if (tabCount > newTabCount) {
@@ -50,23 +50,15 @@ const preprocessor = (input) => {
     i++
   }
 
-  return Promise.resolve(instrOrig.join('\n'));
+  // console.log(instrOrig.join('\n'));
+  return instrOrig.join('\n');
 };
 
+const grammar = fs.readFileSync(path.resolve(__dirname, './light.gra'));
+
 module.exports = (input) => {
-  let grammar;
-
-  return fs
-    .readFileAsync(path.resolve(__dirname, './light.gra'))
-    .then(_grammar => {
-      grammar = _grammar;
-
-      return preprocessor(input);
-    })
-    .then(preprocessed => {
-      return tiny(grammar, Buffer.from(preprocessed));
-    })
-    // .then(ast => console.log(util.inspect(ast, { depth: null })))
-  ;
+  const a = tiny(grammar, Buffer.from(preprocessor(input)));
+  // console.log(util.inspect(a, { depth: null }));
+  return a;
 };
 

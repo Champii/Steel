@@ -1,31 +1,60 @@
-const fs = require('fs');
-const ts = require('typescript');
+const fs   = require('fs');
+const path = require('path');
+const ts   = require('typescript');
 
-module.exports = (string) => {
-  // console.log(string);
-  fs.writeFileSync('./out/test.ts', string);
+const libSource = fs.readFileSync(path.join(path.dirname(require.resolve('typescript')), 'lib.d.ts')).toString();
 
-  let program = ts.createProgram(['./out/test.ts'], {
-    noEmitOnError: true,
-    noImplicitAny: true,
-    target: ts.ScriptTarget.ES6,
-    module: ts.ModuleKind.CommonJS
+const createCompilerHost = (inputs, outputs) => {
+  return ({
+    getSourceFile: function (filename, languageVersion) {
+      return ts.createSourceFile(filename, inputs[filename], ts.ScriptTarget.ES6, "0");
+    },
+    writeFile: function (name, text, writeByteOrderMark) {
+      outputs[name] = text;
+    },
+    getDefaultLibFileName: function () { return "lib.d.ts"; },
+    useCaseSensitiveFileNames: function () { return false; },
+    getCanonicalFileName: function (filename) { return filename; },
+    getCurrentDirectory: function () { return ""; },
+    getNewLine: function () { return "\n"; },
   });
+};
 
-  let emitResult = program.emit();
+module.exports = (file) => {
+  const filename = path.basename(file, '.li');
+  const dirname  = path.dirname(file);
 
-  let allDiagnostics = emitResult.diagnostics;
+  return (input) => {
+    const inputs = {
+      [`${filename}.ts`]: input,
+      'lib.d.ts': libSource
+    };
+    const outputs = {};
 
-  const errs = allDiagnostics.map(diagnostic => {
-      let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-      let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-      return `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`;
-  });
+    const compilerHost = createCompilerHost(inputs, outputs);
+    const program = ts.createProgram([`${filename}.ts`], { target: ts.ScriptTarget.ES6, module: ts.ModuleKind.AMD }, compilerHost);
 
-  let exitCode = emitResult.emitSkipped ? 1 : 0;
+    let emitResult = program.emit();
 
-  if (exitCode) {
-    return Promise.reject(errs.join('\n'));
-  }
+    let allDiagnostics = emitResult.diagnostics;
 
+    const errs = allDiagnostics.map(diagnostic => {
+        let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+        let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+        return `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`;
+    });
+
+    let exitCode = emitResult.emitSkipped ? 1 : 0;
+
+    if (exitCode) {
+      return Promise.reject(errs.join('\n'));
+    }
+
+    return {
+      filename: `${filename}.js`,
+      dirname,
+      output: outputs[`${filename}.js`],
+    };
+
+  };
 };

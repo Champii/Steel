@@ -1,0 +1,70 @@
+l           = require 'lodash'
+fs          = require 'fs.extra'
+argv        = require 'commander'
+path        = require 'path'
+hook        = require 'node-hook'
+walk        = require 'walk'
+async       = require 'async'
+lightscript = require '..'
+
+argv
+  .version '0.0.1'
+  .usage '[options] <files ...>'
+  .option '-c, --compile', 'Compile files'
+  .option '-p, --print', 'Print files'
+  .option '-o, --output <folder>', 'File/folder of output'
+  .option '-s, --strict', 'Disallow implicite use of <Any> type'
+  .option '-t, --typecript', 'Output Typescript instead of Javascript'
+  .parse process.argv
+
+paths = argv.args
+
+transpile = (files) ->
+  lightscript
+  .transpileFiles(files)
+  .catch (err) ->
+    console.log err
+    process.exit 1
+
+compilePath = path.resolve './'
+
+walk = (filePath, done) ->
+  files = {}
+
+  fileWalker = (root, fileStats, next) ->
+    resPath = path.resolve root, fileStats.name
+    outPath = resPath.replace(resPath, compilePath)
+    ext = path.extname fileStats.name
+    if ext is '.li'
+      files[fileStats.name] = resPath
+      fs.mkdirpSync root
+    next!
+
+  walker = fs.walk filePath, {}
+
+  walker.on 'file', fileWalker
+  walker.on 'end', ->
+    done files
+
+if argv.compile
+  if argv.output
+    compilePath = path.resolve './', argv.output
+
+  async.map paths, (filePath, done) ->
+    ext = path.extname(filePath)
+
+    if  ext isnt ''
+      return done null, path.resolve './', filePath
+
+    walk filePath, (res) ->
+      done null, Object.keys res .map (key) -> res[key]
+
+  , (err, res) ->
+    transpile(l.flatten res)
+    .then (fileArr) ->
+      fileArr.map (file) ->
+        resPath = path.resolve file.dirname, file.filename
+        fs.writeFileSync resPath, file.output
+
+else
+  require path.resolve './', paths[0]

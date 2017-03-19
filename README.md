@@ -75,6 +75,24 @@ Inspired from LiveScript
     foo!
     ```
 
+* Objects
+  ```livescript
+  obj1 = {}
+  obj1 = { a: 1 }
+  obj1 = a: 1, b: variable, c: -> 3, d: e: 4
+  obj2 =
+    a: 1
+    b: variable
+    c: -> 3
+    d:
+      e: 4
+  ```
+
+* Object usage
+  ```livescript
+    obj.a.b(a.b).1.c!.f 1, 2 .d
+  ```
+
 * Class
   * Property declaration
     ```livescript
