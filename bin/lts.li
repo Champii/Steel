@@ -28,7 +28,7 @@ transpile = (files) ->
 
 compilePath = path.resolve './'
 
-walk = (filePath, done) ->
+walkPath = (filePath, done) ->
   files = {}
 
   fileWalker = (root, fileStats, next) ->
@@ -56,7 +56,7 @@ if argv.compile
     if  ext isnt ''
       return done null, path.resolve './', filePath
 
-    walk filePath, (res) ->
+    walkPath filePath, (res) ->
       done null, Object.keys res .map (key) -> res[key]
 
   , (err, res) ->

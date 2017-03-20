@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 var l = require('lodash');
 var fs = require('fs.extra');
 var argv = require('commander');
@@ -25,7 +24,7 @@ var transpile = function (files) {
     });
 };
 var compilePath = path.resolve('./');
-walk = function (filePath, done) {
+var walkPath = function (filePath, done) {
     var files = {};
     var fileWalker = function (root, fileStats, next) {
         var resPath = path.resolve(root, fileStats.name);
@@ -52,7 +51,7 @@ if (argv.compile) {
         if (ext !== '') {
             return done(null, path.resolve('./', filePath));
         }
-        return walk(filePath, function (res) {
+        return walkPath(filePath, function (res) {
             return done(null, Object.keys(res).map(function (key) {
                 return res[key];
             }));
