@@ -7,7 +7,7 @@ const expect         = chai.expect;
 
 chai.use(chaiAsPromised);
 
-describe('LightScript functions', () => {
+describe('Functions', () => {
 
   describe('Standard', () => {
 
@@ -60,7 +60,7 @@ describe('LightScript functions', () => {
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = function (a,b) {
+            expect(res).to.eq(`let foo = function (a, b) {
   a;
 };
 `);
@@ -77,7 +77,7 @@ describe('LightScript functions', () => {
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = function (a,b) {
+            expect(res).to.eq(`let foo = function (a, b) {
   a;
   return b;
 };
@@ -131,7 +131,7 @@ foo(1, 2)`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = function (a,b) {
+              expect(res).to.eq(`let foo = function (a, b) {
   return a;
 };
 foo(1, 2);
@@ -167,7 +167,7 @@ foo 1, 2`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = function (a,b) {
+              expect(res).to.eq(`let foo = function (a, b) {
   return a;
 };
 foo(1, 2);
@@ -253,7 +253,7 @@ foo();
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = (a,b) => {
+            expect(res).to.eq(`let foo = (a, b) => {
   a;
 };
 `);
@@ -270,7 +270,7 @@ foo();
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = (a,b) => {
+            expect(res).to.eq(`let foo = (a, b) => {
   a;
   return b;
 };
@@ -324,7 +324,7 @@ foo(1, 2)`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = (a,b) => {
+              expect(res).to.eq(`let foo = (a, b) => {
   return a;
 };
 foo(1, 2);
@@ -360,7 +360,7 @@ foo 1, 2`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = (a,b) => {
+              expect(res).to.eq(`let foo = (a, b) => {
   return a;
 };
 foo(1, 2);

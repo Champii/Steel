@@ -9,7 +9,9 @@ const path        = require('path');
 const async       = require('async');
 const bluebird    = require('bluebird');
 
+const preproc     = require('./preproc');
 const generateAst = require('./generateAst');
+const transformAst = require('./transformAst');
 const transpile   = require('./transpile');
 const compile     = require('./compile');
 
@@ -27,17 +29,22 @@ exports.transpileFile = (file) => {
 };
 
 exports.transpile = (input, file) => {
-  const ast = generateAst(input);
-  const transpiled = transpile(ast);
-  const compiled = compile(file)(transpiled);
+  const preprocessed   = preproc(input);
+  const ast            = generateAst(preprocessed);
+  const transformedAst = transformAst(ast);
+  const transpiled     = transpile(transformedAst);
+
+  const compiled       = compile(file)(transpiled);
 
   return compiled;
 };
 
 // For testing purpose
 exports._transpileStringToTs = (input) => {
-  const ast = generateAst(input);
-  const transpiled = transpile(ast);
+  const preprocessed = preproc(input);
+  const ast          = generateAst(preprocessed);
+  const transformedAst = transformAst(ast);
+  const transpiled = transpile(transformedAst);
 
   return Promise.resolve(transpiled);
 };

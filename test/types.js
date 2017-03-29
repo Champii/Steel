@@ -7,7 +7,7 @@ const expect         = chai.expect;
 
 chai.use(chaiAsPromised);
 
-describe('LightScript types', () => {
+describe('Types', () => {
 
   describe('Inline', () => {
 

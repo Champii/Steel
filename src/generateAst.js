@@ -1,64 +1,38 @@
-const fs    = require('fs');
-const ts    = require('typescript');
-const tiny  = require('tiny-parser');
-const util  = require('util');
-const path  = require('path');
-const async = require('async');
+"use strict"
 
-const countTabs = (it) => {
-  let i = 0;
-  let count = 0;
+const _          = require('lodash');
+const fs         = require('fs');
+const util       = require('util');
+const path       = require('path');
+const pegjs      = require('pegjs');
 
-  if (it.length === 0) {
-    return 0;
-  }
+const grammar    = fs.readFileSync(path.resolve(__dirname, './light.pegjs')).toString();
 
-  while (i < it.length - 1 && it[i] === ' ') {
-    if (it[i] === ' ' && it[i + 1] === ' ')  {
-      count++;
-      i += 2;
-    } else {
-      i++;
-    }
-  }
+const parser     = pegjs.generate(grammar);
 
-  return count;
-};
+const transpile = (input) => {
+  let a;
 
-const preprocessor = (input) => {
-  const instrOrig = input.toString().split('\n').filter(val => val.length).concat(['']);
+  try {
+    a = parser.parse(input);
 
-  let tabCount = 0;
-  let i = 0;
+    // console.log(util.inspect(a, { depth: null }));
 
-  while (i < instrOrig.length) {
-    const line = instrOrig[i];
-    const newTabCount = countTabs(line);
+    return a;
+  } catch (e) {
+    if (e.location != null) {
+      let locationLength = e.location.end.offset - e.location.start.offset;
+      const location = input.substr(_.max([e.location.start.offset - 10, 0]), _.min([locationLength + 20, input.length]));
 
-    if (tabCount < newTabCount && instrOrig[i].trim()[0] !== '.') {
-      instrOrig[i - 1] = instrOrig[i - 1] + ' {'
-      tabCount = newTabCount
-    } else if (tabCount > newTabCount) {
-      for (let j = 0; j < tabCount - newTabCount; j++) {
-        instrOrig.splice(i - j, 0, ('  ').repeat(j) + '}');
-        i += 1;
-      }
+      console.log(`${e.name}: Line ${e.location.start.line} / Col ${e.location.start.column}`);
+      console.log(location);
+      console.log(`${(' ').repeat(e.location.start.offset - _.max([e.location.start.offset - 10, 0]))}^`);
 
-      tabCount = newTabCount;
+      throw e;
     }
 
-    i++
+    throw e;
   }
-
-  // console.log(instrOrig.join('\n'));
-  return instrOrig.join('\n');
 };
 
-const grammar = fs.readFileSync(path.resolve(__dirname, './light.gra'));
-
-module.exports = (input) => {
-  const a = tiny(grammar, Buffer.from(preprocessor(input)));
-  // console.log(util.inspect(a, { depth: null }));
-  return a;
-};
-
+module.exports = transpile;

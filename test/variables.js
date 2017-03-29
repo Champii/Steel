@@ -7,7 +7,7 @@ const expect         = chai.expect;
 
 chai.use(chaiAsPromised);
 
-describe('LightScript variables', () => {
+describe('Variables', () => {
 
   describe('Declaration', () => {
 

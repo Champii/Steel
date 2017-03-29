@@ -39,7 +39,7 @@ tokens.TypeExpression = (node) => {
   return res;
 };
 
-tokens.Expression = (node) => {
+tokens.Statement = (node) => {
   const res = transpile(node.children);
 
   const text = `${res.join('')}`;
@@ -69,8 +69,7 @@ tokens.Assignation = (node) => {
   const res = transpile(node.children);
   let text = '';
 
-
-  if (!variables.includes(res[0]) && node.children[0].symbol !== 'ComputedProperty') {
+  if (!variables.includes(res[0])) {
     text += 'let ';
     variables.push(res[0]);
   }
@@ -85,7 +84,7 @@ tokens.Assignation = (node) => {
   return `${text}${res.join(' = ')}`;
 };
 
-tokens.VariableName = (node) => {
+tokens.Identifier = (node) => {
   return node.literal;
 };
 
@@ -102,6 +101,22 @@ tokens.Block = (node) => {
 
   res.unshift('{\n');
   res.push(`${_.repeat(' ', currentBlockIndent)}}`);
+
+  return res.join('')
+};
+
+tokens.FunctionBlock = (node) => {
+  currentBlockIndent += 2;
+
+  let res = transpile(node.children);
+
+  const indent = _.repeat(' ', currentBlockIndent);
+
+  currentBlockIndent -= 2;
+
+  res = res.map(text => `${indent}${text}`);
+
+  res.push(`${_.repeat(' ', currentBlockIndent)}`);
 
   return res.join('')
 };
@@ -132,35 +147,34 @@ tokens.FunctionArgument = (node) => {
 };
 
 const functionManage = (node) => {
-  currentBlockIndent += 2;
+  // currentBlockIndent += 2;
 
   let res = transpile(node.children);
 
   let args = '()';
-
   if (res[0] && res[0][0] === '(') {
     args = res[0];
     res.shift();
   }
 
-  if (res[0] === '!') {
-    res.shift();
-  } else {
-    const lastStatement = res[res.length - 1];
-    const lastStatementNode = node.children[node.children.length - 1];
+  // if (res[0] === '!') {
+  //   res.shift();
+  // } else {
+  //   const lastStatement = res[res.length - 1];
+  //   const lastStatementNode = node.children[node.children.length - 1];
 
-    // @todo: return  at last leave of last ControlStruct
-    if (!_.startsWith(lastStatementNode.literal, 'return') && lastStatementNode.children[0].symbol !== 'ControlStruct') {
-      res[res.length - 1] = `return ${lastStatement}`;
-    }
-  }
+  //   // @todo: return  at last leave of last ControlStruct
+  //   if (!_.startsWith(lastStatementNode.literal, 'return') && lastStatementNode.children[0].symbol !== 'ControlStruct') {
+  //     res[res.length - 1] = `return ${lastStatement}`;
+  //   }
+  // }
 
-  const indent = _.repeat(' ', currentBlockIndent);
+  // const indent = _.repeat(' ', currentBlockIndent);
 
-  currentBlockIndent -= 2;
+  // currentBlockIndent -= 2;
 
-  res = res.map(text => `${indent}${text}`);
-  res.push(`${_.repeat(' ', currentBlockIndent)}}`);
+  res = res.map(text => `${text}`);
+  res.push(`}`);
   res.unshift('{\n');
 
   return [args, res];
@@ -182,7 +196,7 @@ tokens.FunctionCall = (node) => {
   const res = transpile(node.children);
   const variableName = res.shift();
 
-  return `${variableName}(${res.join('')})`;
+  return `${variableName}${res.join('')}`;
 };
 
 tokens.Call = (node) => {
@@ -200,7 +214,28 @@ tokens.CallArg = (node) => {
 tokens.Object = (node) => {
   const res = transpile(node.children);
 
-  return `{${res.join(',')}}`;
+  return `{${res.join(', ')}}`;
+};
+
+tokens.ObjectProperties = (node) => {
+  const res = transpile(node.children);
+
+  const pairs = _.chunk(res, 2);
+  const objs = pairs.map(pair => pair.join(': '));
+
+  return `${objs.join(', ')}`;
+};
+
+tokens.ComputedProperties = (node) => {
+  const res = transpile(node.children);
+
+  return res.join('');
+};
+
+tokens.ComputedProperty = (node) => {
+  const res = transpile(node.children);
+
+  return res.join('');
 };
 
 tokens.ComputedPropertiesDots = (node) => {
@@ -210,7 +245,13 @@ tokens.ComputedPropertiesDots = (node) => {
     return `${res.join('')}`;
   }
 
-  return `.${res.join('')}`;
+  return `.${res.join('.')}`;
+};
+
+tokens.ComputedPropertiesBraces = (node) => {
+  const res = transpile(node.children);
+
+  return `[${res.join('')}]`;
 };
 
 tokens.NumericComputedProperty = (node) => {
@@ -219,7 +260,13 @@ tokens.NumericComputedProperty = (node) => {
   return `[${node.literal}]`;
 };
 
-tokens.Cond = (node) => {
+tokens.BooleanExpr = (node) => {
+  const res = transpile(node.children);
+
+  return res.join(' ');
+}
+
+tokens.If = (node) => {
   const res = transpile(node.children);
 
   const condition = res.shift();
@@ -240,19 +287,27 @@ tokens.Test = (node) => {
 }
 
 tokens.TestOp = (node) => {
-  const res = transpile(node.children);
-  // return res[0];
-  if (res[0] === 'is') {
+  if (node.literal === 'is') {
     return '===';
-  } else if (res[0] === 'isnt') {
+  } else if (node.literal === 'isnt') {
     return '!==';
   }
+}
+
+tokens.Operation = (node) => {
+  const res = transpile(node.children);
+
+  return `${res.join(' ')}`;
+}
+
+tokens.Operator = (node) => {
+  return node.literal;
 }
 
 tokens.Return = (node) => {
   const res = transpile(node.children);
 
-  return res.join(' ');
+  return `return ${res.join(' ')}`;
 };
 
 tokens.Class = (node) => {
@@ -296,6 +351,17 @@ tokens.ClassMethod = (node) => {
   return `${res.join('')}\n`;
 };
 
+// tokens.Object = (node) => {
+//   const res = transpile(node.children);
+
+//   return `${res.join('')}`;
+// };
+
+// tokens.EmptyObject = (node) => {
+//   const res = transpile(node.children);
+
+//   return '{}';
+// };
 
 const transpile = (nodes) => {
   if (!nodes.length) {

@@ -7,7 +7,7 @@ const expect         = chai.expect;
 
 chai.use(chaiAsPromised);
 
-describe('LightScript statements', () => {
+describe('Statements', () => {
 
   it('should have semi-column on each end of line', () => {
     const string = `foo = 1

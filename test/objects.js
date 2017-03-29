@@ -7,7 +7,7 @@ const expect         = chai.expect;
 
 chai.use(chaiAsPromised);
 
-describe('LightScript objects', () => {
+describe('Objects', () => {
 
   describe('Declatation', () => {
 
@@ -28,7 +28,7 @@ describe('LightScript objects', () => {
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo = {a:1,b:2};\n`);
+          expect(res).to.eq(`let foo = {a: 1, b: 2};\n`);
         })
       ;
     });
@@ -39,7 +39,7 @@ describe('LightScript objects', () => {
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo = {a:1,b:2,c:{d:2,e:{a:1},f:function () {\n  return 1;\n}}};\n`);
+          expect(res).to.eq(`let foo = {a: 1, b: 2, c: {d: 2, e: {a: 1}, f: function () {\n  return 1;\n}}};\n`);
         })
       ;
     });
@@ -58,7 +58,7 @@ describe('LightScript objects', () => {
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo = {a:1,b:2,c:{d:2,e:{a:1},f:function () {\n  return 1;\n},g:{a:a}}};\n`);
+          expect(res).to.eq(`let foo = {a: 1, b: 2, c: {d: 2, e: {a: 1}, f: function () {\n  return 1;\n}, g: {a: a}}};\n`);
         })
       ;
     });

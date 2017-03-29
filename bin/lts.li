@@ -53,7 +53,7 @@ if argv.compile
   async.map paths, (filePath, done) ->
     ext = path.extname(filePath)
 
-    if  ext isnt ''
+    if ext isnt ''
       return done null, path.resolve './', filePath
 
     walkPath filePath, (res) ->
