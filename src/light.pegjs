@@ -92,9 +92,9 @@ Statement
 
 Expression
   = Assignation
-  / Operation
   / BooleanExpr
   / Assignable
+  / Operation
   / Return
 
 Assignation "Assignation"
@@ -109,6 +109,7 @@ Assignation "Assignation"
 Assignable "Assignable"
   = Literal
   / If
+  / Array
   / Object
   / FunctionDeclaration
   / ComputedProperty
@@ -277,6 +278,46 @@ ObjectPropertyLine
     EndOfLine?
   { return prop; }
 
+Array
+  =arr:(
+      EmptyArray
+    / ArrayBlock
+    / (
+        BraceOpen
+        ArrayProperties
+        BraceClose
+      )
+    )
+  { return createNode('Array', arr);}
+
+EmptyArray
+  = ws "[" ws "]" ws
+  { return []; }
+
+ArrayBlock
+  = BraceOpen
+    body: ArrayPropertyLine*
+    BraceClose
+  { return body; }
+
+ArrayProperties
+  = ass:  Assignable
+    tail: ArrayPropertyComa?
+  { return createNode('ArrayProperties', _.compact([ass, tail])); }
+
+ArrayPropertyComa
+  = Coma
+    body: ArrayProperties
+  { return createNode('ArrayPropertyComa', body); }
+
+ArrayPropertyLine
+  = ws
+    prop: ArrayProperties
+    ws
+    Coma?
+    EndOfLine?
+  { return prop; }
+
 ComputedProperty
   = id:(
       Literal
@@ -364,6 +405,7 @@ TestOp
 Literal "Literal"
   = body:(
       String
+    / TemplateString
     / Number
     )
   { return createNode('Literal', body); }
@@ -379,8 +421,17 @@ String "String"
     QuotationMark
   { return createNode('String', [], text()); }
 
+TemplateString "TemplateString"
+  = BackQuote
+    Char*
+    BackQuote
+  { return createNode('TemplateString', [], text()); }
+
 QuotationMark "QuotationMark"
   = "'"
+
+BackQuote "BackQuote"
+  = "`"
 
 IdentifierChar "IdentifierChar"
   = [a-zA-Z]
@@ -388,6 +439,7 @@ IdentifierChar "IdentifierChar"
 Char "Char"
   = Unescaped
   / Escape sequence:(
+      "`"
       "'"
     / '"'
     / "\\"
@@ -404,7 +456,7 @@ Escape "Escape"
   = "\\"
 
 Unescaped "Unescaped"
-  = [^\0-\x1F\x22\x5C']
+  = [^\0-\x1F\x22\x5C'`]
 
 ws "WhiteSpace"
   = " "*

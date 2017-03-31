@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 var l = require('lodash');
 var fs = require('fs.extra');
 var argv = require('commander');

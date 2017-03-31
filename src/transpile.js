@@ -226,6 +226,18 @@ tokens.ObjectProperties = (node) => {
   return `${objs.join(', ')}`;
 };
 
+tokens.Array = (node) => {
+  const res = transpile(node.children);
+
+  return `[${res.join(', ')}]`;
+};
+
+tokens.ArrayProperties = (node) => {
+  const res = transpile(node.children);
+
+  return `${res.join(', ')}`;
+};
+
 tokens.ComputedProperties = (node) => {
   const res = transpile(node.children);
 

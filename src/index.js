@@ -1,19 +1,19 @@
 "use strict"
 
-let fs            = require('fs');
-const ts          = require('typescript');
-const tiny        = require('tiny-parser');
-const hook        = require('node-hook');
-const util        = require('util');
-const path        = require('path');
-const async       = require('async');
-const bluebird    = require('bluebird');
+let fs             = require('fs');
+const ts           = require('typescript');
+const tiny         = require('tiny-parser');
+const hook         = require('node-hook');
+const util         = require('util');
+const path         = require('path');
+const async        = require('async');
+const bluebird     = require('bluebird');
 
-const preproc     = require('./preproc');
-const generateAst = require('./generateAst');
+const preproc      = require('./preproc');
+const generateAst  = require('./generateAst');
 const transformAst = require('./transformAst');
-const transpile   = require('./transpile');
-const compile     = require('./compile');
+const transpile    = require('./transpile');
+const compile      = require('./compile');
 
 fs = bluebird.promisifyAll(fs);
 
@@ -33,7 +33,6 @@ exports.transpile = (input, file) => {
   const ast            = generateAst(preprocessed);
   const transformedAst = transformAst(ast);
   const transpiled     = transpile(transformedAst);
-
   const compiled       = compile(file)(transpiled);
 
   return compiled;
@@ -41,10 +40,10 @@ exports.transpile = (input, file) => {
 
 // For testing purpose
 exports._transpileStringToTs = (input) => {
-  const preprocessed = preproc(input);
-  const ast          = generateAst(preprocessed);
+  const preprocessed   = preproc(input);
+  const ast            = generateAst(preprocessed);
   const transformedAst = transformAst(ast);
-  const transpiled = transpile(transformedAst);
+  const transpiled     = transpile(transformedAst);
 
   return Promise.resolve(transpiled);
 };
