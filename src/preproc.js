@@ -44,6 +44,6 @@ module.exports = (input) => {
     i++
   }
 
-  // console.log(instrOrig.join('\n'));
+  console.log(instrOrig.join('\n'));
   return instrOrig.join('\n');
 };

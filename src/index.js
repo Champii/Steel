@@ -33,6 +33,7 @@ exports.transpile = (input, file) => {
   const ast            = generateAst(preprocessed);
   const transformedAst = transformAst(ast);
   const transpiled     = transpile(transformedAst);
+  console.log(transpiled)
   const compiled       = compile(file)(transpiled);
 
   return compiled;

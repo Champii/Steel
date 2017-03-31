@@ -35,7 +35,10 @@ module.exports = (file) ->
       message = ts.flattenDiagnosticMessageText diagnostic.messageText, '\n'
       `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`
 
-    exitCode = emitResult.emitSkipped ? 1 : 0
+    if emitResult.emitSkipped
+      exitCode = 1
+    else
+      exitCode = 0
 
     if exitCode
       Promise.reject errs.join '\n'

@@ -8,7 +8,7 @@ const pegjs      = require('pegjs');
 
 const grammar    = fs.readFileSync(path.resolve(__dirname, './light.pegjs')).toString();
 
-const parser     = pegjs.generate(grammar);
+const parser     = pegjs.generate(grammar, { cache: true });
 
 const transpile = (input) => {
   let a;
