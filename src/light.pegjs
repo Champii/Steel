@@ -107,6 +107,7 @@ Assignation "Assignation"
   = head:(
       ComputedProperty
     / ObjectDestruct
+    / ArrayDestruct
     / Identifier
     )
     AssignationOp
@@ -132,7 +133,12 @@ Assignable "Assignable"
   / FunctionDeclaration
   / Unary
   / FunctionCall
+  / Not
   / Identifier
+
+Not
+  = "!" ass:Assignable
+  { return createNode('Not', [ass]); }
 
 Operation
   = left:Assignable
@@ -324,6 +330,19 @@ ObjectDestructPropertyComa
     Coma? EndOfLine?
   { return createNode('ObjectDestructPropertyComa', id); }
 
+ArrayDestruct
+  = BraceOpen
+    body: ArrayDestructPropertyComa+
+    BraceClose
+  { return createNode('ArrayDestruct', body); }
+
+ArrayDestructPropertyComa
+  = ws
+    id:Identifier
+    ws
+    Coma? EndOfLine?
+  { return createNode('ArrayDestructPropertyComa', id); }
+
 Array
   =arr:(
       EmptyArray
@@ -510,7 +529,7 @@ TestOp
     / ">="
     / "&&"
     / "||"
-    )
+    ) " "
   { return createNode('TestOp', [], op); }
 
 Unary
@@ -537,13 +556,13 @@ Identifier "Identifier"
 
 String "String"
   = QuotationMark
-    Char*
+    (Char / "`")*
     QuotationMark
   { return createNode('String', [], text()); }
 
 TemplateString "TemplateString"
   = BackQuote
-    Char*
+    (Char / "'")*
     BackQuote
   { return createNode('TemplateString', [], text()); }
 
@@ -554,7 +573,7 @@ BackQuote "BackQuote"
   = "`"
 
 IdentifierChar "IdentifierChar"
-  = ("_" / [a-zA-Z]) [a-zA-Z0-9_\-]*
+  = [_a-zA-Z] [a-zA-Z0-9_\-]*
 
 Char "Char"
   = Unescaped

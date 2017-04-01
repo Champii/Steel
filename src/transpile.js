@@ -239,6 +239,12 @@ tokens.ObjectDestruct = (node) => {
   return `{${res.join(', ')}}`;
 };
 
+tokens.ArrayDestruct = (node) => {
+  const res = transpile(node.children);
+
+  return `[${res.join(', ')}]`;
+};
+
 tokens.ObjectProperties = (node) => {
   const res = transpile(node.children);
 
@@ -387,6 +393,12 @@ tokens.Unary = (node) => {
   return node.literal;
 }
 
+tokens.Not = (node) => {
+  const res = transpile(node.children);
+
+  return `!${res.join('')}`;
+}
+
 tokens.Operation = (node) => {
   const res = transpile(node.children);
 
@@ -449,6 +461,7 @@ tokens.ClassMethod = (node) => {
 
   return `${res.join('')}\n`;
 };
+
 
 // tokens.Object = (node) => {
 //   const res = transpile(node.children);

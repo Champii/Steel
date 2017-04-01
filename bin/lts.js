@@ -6,7 +6,7 @@ var hook = require('node-hook');
 var walk = require('walk');
 var async = require('async');
 var lightscript = require('..');
-argv.version('0.0.1').usage('[options] <files ...>').option('-c, --compile', 'Compile files').option('-p, --print', 'Print files').option('-o, --output <folder>', 'File/folder of output').option('-s, --strict', 'Disallow implicite use of <Any> type').option('-t, --typecript', 'Output Typescript instead of Javascript').parse(process.argv);
+argv.version('0.0.1'.usage('[options] <files ...>'.option('-c, --compile', 'Compile files'.option('-p, --print', 'Print files'.option('-o, --output <folder>', 'File/folder of output'.option('-s, --strict', 'Disallow implicite use of <Any> type'.option('-t, --typecript', 'Output Typescript instead of Javascript'.parse(process.argv))))))));
 var paths = argv.args;
 var transpile = function (files) {
     return lightscript.transpileFiles(files)["catch"](function (err) {
@@ -31,7 +31,10 @@ var walkPath = function (filePath, done) {
     var walker = fs.walk(filePath, {});
     walker.on('file', fileWalker);
     return walker.on('end', function () {
-        done(files);
+        {
+            done, files;
+        }
+        ;
     });
 };
 if (argv.compile) {
