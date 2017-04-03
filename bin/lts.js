@@ -11,7 +11,7 @@ var paths = argv.args;
 var transpile = function (files) {
     return lightscript.transpileFiles(files)["catch"](function (err) {
         console.log(err);
-        process.exit(1);
+        return process.exit(1);
     });
 };
 var compilePath = path.resolve('./');
@@ -26,15 +26,12 @@ var walkPath = function (filePath, done) {
             fs.mkdirpSync(root);
         }
         ;
-        next();
+        return next();
     };
     var walker = fs.walk(filePath, {});
     walker.on('file', fileWalker);
     return walker.on('end', function () {
-        {
-            done, files;
-        }
-        ;
+        return done(files);
     });
 };
 if (argv.compile) {
@@ -49,15 +46,15 @@ if (argv.compile) {
         }
         ;
         return walkPath(filePath, function (res) {
-            done(null, Object.keys(res).map(function (key) {
-                res[key];
+            return done(null, Object.keys(res).map(function (key) {
+                return res[key];
             }));
         });
     }, function (err, res) {
         return transpile(l.flatten(res)).then(function (fileArr) {
-            fileArr.map(function (file) {
+            return fileArr.map(function (file) {
                 resPath = path.resolve(file.dirname, file.filename);
-                fs.writeFileSync(resPath, file.output);
+                return fs.writeFileSync(resPath, file.output);
             });
         });
     });

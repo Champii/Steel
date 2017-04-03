@@ -29,6 +29,8 @@ const hasNode = (node, symbol) => {
 };
 
 tokens.FunctionDeclaration = (node) => {
+  node.children = visit(node.children);
+
   const func = node.children[0];
 
   if (hasNode(func, 'NoReturn')) {

@@ -30,11 +30,11 @@ module.exports = (input) => {
     const newTabCount = countTabs(line);
 
     if (tabCount < newTabCount && instrOrig[i].trim()[0] !== '.') {
-      instrOrig[i - 1] = instrOrig[i - 1] + ' {'
+      instrOrig[i - 1] = instrOrig[i - 1] + '@{'
       tabCount = newTabCount
     } else if (tabCount > newTabCount) {
       for (let j = 0; j < tabCount - newTabCount; j++) {
-        instrOrig.splice(i - j, 0, ('  ').repeat(j) + '}');
+        instrOrig.splice(i - j, 0, ('  ').repeat(j) + '@}');
         i += 1;
       }
 
@@ -44,6 +44,6 @@ module.exports = (input) => {
     i++
   }
 
-  console.log(instrOrig.join('\n'));
+  // console.log(instrOrig.join('\n'));
   return instrOrig.join('\n');
 };

@@ -44,6 +44,21 @@ describe('Objects', () => {
       ;
     });
 
+    it('should have multiline object', () => {
+      const string = `foo =
+  a: 1
+  b: 'a'
+  c: -> 1
+`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`let foo = {a: 1, b: 'a', c: function () {\n  return 1;\n}};\n`);
+        })
+      ;
+    });
+
     it('should have object neasted', () => {
       const string = `foo =
   a: 1

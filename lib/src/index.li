@@ -1,5 +1,3 @@
-"use strict"
-
 fs           = require 'fs'
 ts           = require 'typescript'
 tiny         = require 'tiny-parser'
@@ -34,7 +32,6 @@ exports.transpile = (input, file) ->
 
   compiled
 
-# For testing purpose
 exports._transpileStringToTs = (input) ->
   preprocessed   = preproc input
   ast            = generateAst preprocessed

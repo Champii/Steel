@@ -263,7 +263,7 @@ foo();
 
       it('should produce a function with multiple arguments returns last', () => {
         const string = `foo = (a, b) ~>
-  a
+  c = 1
   b
 `;
         const promise = lightscript._transpileStringToTs(string);
@@ -271,7 +271,7 @@ foo();
         return expect(promise).to.be.fulfilled
           .then(res => {
             expect(res).to.eq(`let foo = (a, b) => {
-  a;
+  let c = 1;
   return b;
 };
 `);

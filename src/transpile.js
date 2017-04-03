@@ -44,6 +44,14 @@ tokens.Statement = (node) => {
 
   const text = `${res.join('')}`;
 
+  if (node.children[0].symbol === 'If') {
+    return `${text}`;
+  }
+
+  if (!res[0]) {
+    return '';
+  }
+
   if (res[0][res[0].length - 2] === ';' && res[0][res[0].length - 1] === '\n') {
     return text;
   }
@@ -355,7 +363,6 @@ tokens.While = (node) => {
 tokens.For = (node) => {
   const res = transpile(node.children);
 
-  console.log(res);
   const condition = res.shift();
 
   return `for (${condition}) ${res.join('')}\n`;
@@ -363,8 +370,6 @@ tokens.For = (node) => {
 
 tokens.ForCond = (node) => {
   const res = transpile(node.children);
-
-  console.log(res);
 
   return `${res.join(';')}`;
 }
