@@ -23,6 +23,13 @@ tokens.Statement = (node) ->
   res = transpile node.children
 
   text = `${res.join('')}`
+
+  if ['If', 'Try'].includes(node.children[0].symbol)
+    return `${text}`
+
+  if !res[0]
+    return ''
+
   if res[0][res[0].length - 2] is '' and res[0][res[0].length - 1] is '\n'
     return text
 
@@ -44,7 +51,7 @@ tokens.Assignation = (node) ->
   res = transpile node.children
   text = ''
 
-  if !variables.includes res[0]
+  if !variables.includes res[0] and node.children[0].symbol isnt 'ComputedProperties'
     text += ''
     variables.push res[0]
 

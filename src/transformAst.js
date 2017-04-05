@@ -39,7 +39,11 @@ tokens.FunctionDeclaration = (node) => {
 
   const block = _.last(func.children);
   const lastStatement = _.last(block.children);
-  const content = lastStatement.children[0];
+  const content = lastStatement ? lastStatement.children[0] : null;
+
+  if (!content || ['If', 'Try', 'Return'].includes(content.symbol)) {
+    return node;
+  }
 
   lastStatement.children[0] = createNode('Return', content, `return ${content.literal}`);
 

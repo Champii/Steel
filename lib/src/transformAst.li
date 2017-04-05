@@ -23,6 +23,8 @@ hasNode = (node, symbol) ->
     .includes symbol
 
 tokens.FunctionDeclaration = (node) ->
+  node.children = visit node.children
+
   func = node.children[0]
 
   if hasNode func, 'NoReturn'
@@ -30,7 +32,10 @@ tokens.FunctionDeclaration = (node) ->
 
   block = _.last func.children
   lastStatement = _.last block.children
-  content = lastStatement.children[0]
+  constcontent = lastStatement && lastStatement.children[0] || null
+
+  if !content or ['If', 'Try', 'Return'].includes(content.symbol)
+    return node
 
   lastStatement.children[0] = createNode 'Return', content, `return ${content.literal}`
 

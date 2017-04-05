@@ -30,7 +30,7 @@ exports.transpileFile = (file) => {
 
 exports.transpile = (input, file) => {
   const preprocessed   = preproc(input);
-  const ast            = generateAst(preprocessed);
+  const ast            = generateAst(file, preprocessed);
   const transformedAst = transformAst(ast);
   const transpiled     = transpile(transformedAst);
   console.log(transpiled)
@@ -42,7 +42,7 @@ exports.transpile = (input, file) => {
 // For testing purpose
 exports._transpileStringToTs = (input) => {
   const preprocessed   = preproc(input);
-  const ast            = generateAst(preprocessed);
+  const ast            = generateAst('', preprocessed);
   const transformedAst = transformAst(ast);
   const transpiled     = transpile(transformedAst);
 

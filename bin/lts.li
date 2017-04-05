@@ -1,4 +1,4 @@
-l           = require 'lodash'
+_           = require 'lodash'
 fs          = require 'fs.extra'
 argv        = require 'commander'
 path        = require 'path'
@@ -60,7 +60,7 @@ if argv.compile
       done null, Object.keys res .map (key) -> res[key]
 
   , (err, res) ->
-    transpile(l.flatten res)
+    transpile(_.flatten res)
     .then (fileArr) ->
       fileArr.map (file) ->
         resPath = path.resolve file.dirname, file.filename

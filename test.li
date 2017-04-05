@@ -1,388 +1,50 @@
-_       = require 'lodash'
-ts      = require 'typescript'
-util    = require 'util'
+fs   = require 'fs'
+path = require 'path'
+ts   = require 'typescript'
 
-tokens    = {}
-variables = []
-types     = {}
+libSource = fs.readFileSync(path.join(path.dirname(require.resolve('typescript')), 'lib.d.ts')).toString()
 
-currentBlockIndent = 0
+createCompilerHost = (inputs, outputs) ->
+  getSourceFile: (filename, languageVersion) -> ts.createSourceFile filename, inputs[filename], ts.ScriptTarget.ES6, '0'
+  writeFile: (name, text, writeByteOrderMark) -> outputs[name] = text
+  getDefaultLibFileName: -> 'lib.d.ts'
+  useCaseSensitiveFileNames: -> false
+  getCanonicalFileName: (filename) -> filename
+  getCurrentDirectory: -> ''
+  getNewLine: -> '\n'
 
-tokens.TypeAssignation = (node) ->
-  res = transpile node.children
+module.exports = (file) ->
+  filename = path.basename file, '.li'
+  dirname  = path.dirname file
 
-  variable = res.shift()
-  types[variable] = res[0]
+  return (input) ->
+    inputs =
+      `${filename}.ts`: input
+      'lib.d.ts': libSource
+    outputs = {}
 
-  ''
+    compilerHost = createCompilerHost inputs, outputs
+    program = ts.createProgram [`${filename}.ts`], { target: ts.ScriptTarget.ES6, module: ts.ModuleKind.AMD }, compilerHost
 
-tokens.TypeExpression = (node) ->
-  transpile node.children
+    emitResult = program.emit!
 
-tokens.Statement = (node) ->
-  res = transpile node.children
+    allDiagnostics = emitResult.diagnostics
 
-  text = `${res.join('')}`
+    errs = allDiagnostics.map (diagnostic) ->
+      { line, character } = diagnostic.file.getLineAndCharacterOfPosition diagnostic.start
+      message = ts.flattenDiagnosticMessageText diagnostic.messageText, '\n'
+      `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`
 
-  if res[0][res[0].length - 2] is '' and res[0][res[0].length - 1] is '\n'
-    return text
-
-  `${text}\n`
-
-applyTypes = (type, node) ->
-  if type.length is 1
-    return `:${type[0]}`
-
-  argsNode = transpile(node.findSymbol('FunctionArgument').children[0].children)[0]
-
-  returnType = type.pop()
-
-  argsTypes = argsNode.map((arg, i) -> `${arg}:${type[i]}`)
-
-  `:(${argsTypes}) => ${returnType}`
-
-tokens.Assignation = (node) ->
-  res = transpile node.children
-  text = ''
-
-  if !variables.includes res[0]
-    text += ''
-    variables.push res[0]
-
-  if res[1][0] === ':'
-    res[0] = `${res[0]}${res[1]}`
-    res.splice(1, 1)
-  else if types[res[0]]
-    res[0] = `${res[0]}${applyTypes(types[res[0]], node)}`
-
-  `${text}${res.join(' = ')}`
-
-tokens.ParensAssignable = (node) ->
-  res = transpile node.children
-
-  parens = res.shift()
-
-  `(${res.join('')})`
-
-tokens.ParensExpression = (node) ->
-  res = transpile node.children
-
-  parens = res.shift()
-
-  `(${parens})${res.join('')}`
-
-tokens.Identifier = (node) ->
-  node.literal
-
-tokens.Block = (node) ->
-  currentBlockIndent += 2
-
-  res = transpile node.children
-
-  indent = _.repeat ' ', currentBlockIndent
-
-  currentBlockIndent -= 2
-
-  res = res.map((text) -> `${indent}${text}`)
-
-  res.unshift('{\n')
-  res.push(`${_.repeat(' ', currentBlockIndent)}}`)
-
-  res.join('')
-
-tokens.FunctionBlock = (node) ->
-  currentBlockIndent += 2
-
-  res = transpile(node.children)
-
-  indent = _.repeat(' ', currentBlockIndent)
-
-  currentBlockIndent -= 2
-
-  res = res.map((text) -> `${indent}${text}`)
-
-  res.push(`${_.repeat(' ', currentBlockIndent)}`)
-
-  res.join('')
-
-tokens.Literal = (node) ->
-  node.literal
-
-tokens.FunctionArguments = (node) ->
-  res = transpile(node.children)
-
-  `(${res.join(', ')})`
-
-tokens.FunctionArgument = (node) ->
-  res = transpile(node.children)
-  arr = []
-
-  res.forEach (arg) ->
-    if arg[0] === ':'
-      arr[arr.length - 1] = `${arr[arr.length - 1]}${arg}`
+    if emitResult.emitSkipped
+      exitCode = 1
     else
-      arr.push(arg)
+      exitCode = 0
 
-  arr
+    if exitCode
+      Promise.reject errs.join '\n'
 
-functionManage = (node) ->
+    return
+      filename: `${filename}.js`
+      dirname
+      output: outputs[`${filename}.js`]
 
-  res = transpile(node.children)
-
-  args = '()'
-  if res[0] && res[0][0] === '('
-    args = res[0]
-    res.shift()
-
-  res = res.map((text) -> `${text}`)
-  res.push(`}`)
-  res.unshift('{\n')
-
-  [args, res]
-
-tokens.FunctionExpression = (node) ->
-  [args, res] = functionManage(node)
-
-  `function ${args} ${res.join('')}`
-
-tokens.ArrowFunction = (node) ->
-  [args, res] = functionManage(node)
-
-  `${args} => ${res.join('')}`
-
-tokens.FunctionCall = (node) ->
-  res = transpile(node.children)
-  variableName = res.shift()
-
-  `${variableName}${res.join('')}`
-
-tokens.Call = (node) ->
-  res = transpile(node.children)
-
-  `(${res.join('')})`
-
-tokens.CallArg = (node) ->
-  res = transpile(node.children)
-
-  res.join(', ')
-
-tokens.Object = (node) ->
-  res = transpile(node.children)
-
-  `{${res.join(', ')}}`
-
-tokens.ObjectDestruct = (node) ->
-  res = transpile(node.children)
-
-  `{${res.join(', ')}}`
-
-tokens.ArrayDestruct = (node) ->
-  res = transpile(node.children)
-
-  `[${res.join(', ')}]`
-
-tokens.ObjectProperties = (node) ->
-  res = transpile(node.children)
-
-  pairs = _.chunk(res, 2)
-  objs = pairs.map((pair) -> pair.join(': '))
-
-  `${objs.join(', ')}`
-
-tokens.Array = (node) ->
-  res = transpile(node.children)
-
-  `[${res.join(', ')}]`
-
-tokens.ArrayProperties = (node) ->
-  res = transpile(node.children)
-
-  `${res.join(', ')}`
-
-tokens.ComputedProperties = (node) ->
-  res = transpile(node.children)
-
-  res.join('')
-
-tokens.ComputedProperty = (node) ->
-  res = transpile(node.children)
-
-  res.join('')
-
-tokens.ComputedPropertiesDots = (node) ->
-  res = transpile(node.children)
-
-  if node.children[0].symbol is 'NumericComputedProperty'
-    return `${res.join('')}`
-
-  `.${res.join('.')}`
-
-tokens.ComputedPropertiesBraces = (node) ->
-  res = transpile(node.children)
-
-  `[${res.join('')}]`
-
-tokens.NumericComputedProperty = (node) ->
-  res = transpile(node.children)
-
-  `[${node.literal}]`
-
-tokens.BooleanExpr = (node) ->
-  res = transpile(node.children)
-
-  res.join(' ')
-
-tokens.If = (node) ->
-  res = transpile(node.children)
-
-  condition = res.shift()
-
-  `if (${condition}) ${res.join('')}\n`
-
-tokens.ElseIf = (node) ->
-  res = transpile(node.children)
-
-  condition = res.shift()
-
-  `else if (${condition}) ${res.join('')}\n`
-
-tokens.Else = (node) ->
-  res = transpile(node.children)
-
-  ` else ${res.join('')}\n`
-
-tokens.Try = (node) ->
-  res = transpile(node.children)
-
-  `try ${res.join('')}\n`
-
-tokens.Catch = (node) ->
-  res = transpile(node.children)
-  cond = ''
-  if res.length is 2
-    cond = res.shift()
-
-  `catch (${cond})${res.join('')}\n`
-
-tokens.While = (node) ->
-  res = transpile(node.children)
-
-  condition = res.shift()
-
-  `while (${condition}) ${res.join('')}\n`
-
-tokens.For = (node) ->
-  res = transpile(node.children)
-
-  console.log(res)
-  condition = res.shift()
-
-  `for (${condition}) ${res.join('')}\n`
-
-tokens.ForCond = (node) ->
-  res = transpile(node.children)
-
-  console.log(res)
-
-  `${res.join('')}`
-
-tokens.Test = (node) ->
-  res = transpile(node.children)
-
-  `${res.join(' ')}`
-
-tokens.TestOp = (node) ->
-  if node.literal is 'is'
-    return '==='
-  else if node.literal is 'isnt'
-    return '!=='
-  else if node.literal is 'and'
-    return '&&'
-  else if node.literal is 'or'
-    return '||'
-
-  node.literal
-
-tokens.Unary = (node) ->
-  node.literal
-
-tokens.Not = (node) ->
-  res = transpile(node.children)
-
-  `!${res.join('')}`
-
-tokens.Operation = (node) ->
-  res = transpile(node.children)
-
-  `${res.join(' ')}`
-
-tokens.Operator = (node) ->
-  node.literal
-
-tokens.Return = (node) ->
-  res = transpile(node.children)
-
-  `return ${res.join(' ')}`
-
-tokens.Throw = (node) ->
-  res = transpile(node.children)
-
-  `throw ${res.join(' ')}`
-
-tokens.Class = (node) ->
-  res = transpile(node.children)
-
-  `class ${res.join(' ')}`
-
-tokens.ClassBlock = (node) ->
-  currentBlockIndent += 2
-
-  res = transpile(node.children)
-
-  indent = _.repeat(' ', currentBlockIndent)
-
-  currentBlockIndent -= 2
-
-  res = res.map((text) -> `${indent}${text}`)
-
-  res.unshift('{\n')
-  res.push(`${_.repeat(' ', currentBlockIndent)}}`)
-
-  res.join('')
-
-tokens.ClassStatement = (node) ->
-  res = transpile(node.children)
-
-  `${res.join('')}\n`
-
-tokens.ClassMethodDeclaration = (node) ->
-  res = transpile(node.children)
-
-  `${res.join('')}\n`
-
-tokens.ClassMethod = (node) ->
-  res = transpile(node.children)
-
-  `${res.join('')}\n`
-
-transpile = (nodes) ->
-  if !nodes.length
-    return []
-
-  nodes.map (node) ->
-    token = tokens[node.symbol]
-    if !node.symbol
-      return node.literal
-
-    if token
-      return token node
-
-    transpile(node.children).join('')
-
-_transpile = (ast) ->
-  variables = []
-  types = {}
-
-  transpile(ast.children).join('')
-
-module.exports = _transpile

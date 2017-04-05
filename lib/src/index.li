@@ -23,9 +23,13 @@ exports.transpileFile = (file) ->
     .then (input) -> exports.transpile input, file
 
 exports.transpile = (input, file) ->
+  console.log 'Start'
   preprocessed   = preproc input
-  ast            = generateAst preprocessed
+  console.log 'Processed'
+  ast            = generateAst file, preprocessed
+  console.log 'Ast'
   transformedAst = transformAst ast
+  console.log 'TransformedAst'
   transpiled     = transpile transformedAst
   compileFunc    = compile file
   compiled       = compileFunc transpiled

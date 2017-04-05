@@ -44,7 +44,7 @@ tokens.Statement = (node) => {
 
   const text = `${res.join('')}`;
 
-  if (node.children[0].symbol === 'If') {
+  if (['If', 'Try'].includes(node.children[0].symbol)) {
     return `${text}`;
   }
 
@@ -77,7 +77,7 @@ tokens.Assignation = (node) => {
   const res = transpile(node.children);
   let text = '';
 
-  if (!variables.includes(res[0])) {
+  if (!variables.includes(res[0]) && node.children[0].symbol !== 'ComputedProperties') {
     text += 'let ';
     variables.push(res[0]);
   }

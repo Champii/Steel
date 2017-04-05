@@ -214,6 +214,24 @@ describe('Objects', () => {
       ;
     });
 
+    it('should have multiline property call', () => {
+      const string = `a
+  .b
+  .c 1
+  .e -> 1
+`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`a.b.c(1).e(function () {
+  return 1;
+});
+`);
+        })
+      ;
+    });
+
   });
 
 });

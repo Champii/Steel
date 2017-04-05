@@ -10,7 +10,7 @@ const grammar    = fs.readFileSync(path.resolve(__dirname, './light.pegjs')).toS
 
 const parser     = pegjs.generate(grammar, { cache: true });
 
-const transpile = (input) => {
+const transpile = (filename, input) => {
   let a;
 
   try {
@@ -24,7 +24,7 @@ const transpile = (input) => {
       let locationLength = e.location.end.offset - e.location.start.offset;
       const location = input.substr(_.max([e.location.start.offset - 10, 0]), _.min([locationLength + 20, input.length]));
 
-      console.log(`${e.name}: Line ${e.location.start.line} / Col ${e.location.start.column}`);
+      console.log(`${filename}: ${e.name}: Line ${e.location.start.line} / Col ${e.location.start.column}`);
       console.log(location);
       console.log(`${(' ').repeat(e.location.start.offset - _.max([e.location.start.offset - 10, 0]))}^`);
 
