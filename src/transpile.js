@@ -5,10 +5,18 @@ const ts      = require('typescript');
 const util    = require('util');
 
 let tokens    = {};
-let variables = [];
+let variables = [[]];
 let types     = {};
 
 let currentBlockIndent = 0;
+
+const hasVariable = (variable) => {
+  return _.some(variables, (scope) => scope.includes(variable));
+};
+
+const pushScope = () => variables.push([]);
+const popScope  = () => variables.pop();
+const addVariable = (variable) => variables[variables.length - 1].push(variable);
 
 // tokens.Statement = (node) => {
 //   const res = transpile(node.children);
@@ -77,9 +85,9 @@ tokens.Assignation = (node) => {
   const res = transpile(node.children);
   let text = '';
 
-  if (!variables.includes(res[0]) && node.children[0].symbol !== 'ComputedProperties') {
+  if (!hasVariable(res[0]) && node.children[0].symbol !== 'ComputedProperties') {
     text += 'let ';
-    variables.push(res[0]);
+    addVariable(res[0]);
   }
 
   if (res[1][0] === ':') {
@@ -132,7 +140,11 @@ tokens.Block = (node) => {
 tokens.FunctionBlock = (node) => {
   currentBlockIndent += 2;
 
+  pushScope();
+
   let res = transpile(node.children);
+
+  popScope();
 
   const indent = _.repeat(' ', currentBlockIndent);
 
@@ -151,6 +163,8 @@ tokens.Literal = (node) => {
 
 tokens.FunctionArguments = (node) => {
   let res = transpile(node.children);
+
+  res.forEach(addVariable);
 
   return `(${res.join(', ')})`;
 };
@@ -257,7 +271,16 @@ tokens.ObjectProperties = (node) => {
   const res = transpile(node.children);
 
   const pairs = _.chunk(res, 2);
-  const objs = pairs.map(pair => pair.join(': '));
+  const objs = pairs
+    .map(pair => {
+      if (pair[0][0] === '`') {
+        pair[0] = `[${pair[0]}]`;
+      }
+
+      return pair;
+    })
+    .map(pair => pair.join(': '))
+  ;
 
   return `${objs.join(', ')}`;
 };
@@ -502,7 +525,7 @@ const transpile = (nodes) => {
 };
 
 const _transpile = (ast) => {
-  variables = [];
+  variables = [[]];
   types = {};
 
   return transpile(ast.children).join('');
