@@ -16,13 +16,13 @@ var transpile = function (files) {
 };
 var compilePath = path.resolve('./');
 var walkPath = function (filePath, done) {
-    var files = {};
+    files = {};
     var fileWalker = function (root, fileStats, next) {
         var resPath = path.resolve(root, fileStats.name);
         var outPath = resPath.replace(resPath, compilePath);
         var ext = path.extname(fileStats.name);
         if (ext === '.li') {
-            var files_1 = (fileStats.name = resPath[0], resPath);
+            files[fileStats.name] = resPath;
             fs.mkdirpSync(root);
         }
         return next();
@@ -38,9 +38,9 @@ if (argv.compile) {
         compilePath = path.resolve('./', argv.output);
     }
     async.map(paths, function (filePath, done) {
-        ext = path.extname(filePath);
+        var ext = path.extname(filePath);
         if (ext !== '') {
-            return (done(null, path.resolve('./', filePath)));
+            return done(null, path.resolve('./', filePath));
         }
         return walkPath(filePath, function (res) {
             return done(null, Object.keys(res).map(function (key) {
@@ -50,7 +50,7 @@ if (argv.compile) {
     }, function (err, res) {
         return transpile(_.flatten(res)).then(function (fileArr) {
             return fileArr.map(function (file) {
-                resPath = path.resolve(file.dirname, file.filename);
+                var resPath = path.resolve(file.dirname, file.filename);
                 return fs.writeFileSync(resPath, file.output);
             });
         });

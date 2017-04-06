@@ -37,7 +37,7 @@
     // res.unshift(open + '\n');
     // res.push(close);
 
-    return body.join('');
+    return res.join('');
   };
 
   const AddReturnLast = () => {
@@ -68,20 +68,18 @@ Root
   = head:Statement+
   { return createNode('Root', head); }
 
-BlockOpen       = ws "{" ws EndOfLine? { indentCount += 1; return ''; }
-BlockClose      = ws "}" ws { return ''; }
-IndentBlockOpen = ws "@{" ws EndOfLine? { indentCount += 1; return ''; }
-IndentBlockClose= ws "@}" ws { return ''; }
-ParensOpen      = ws "(" ws
-ParensClose     = ws ")" ws
-BraceOpen       = ws "[" ws
-BraceClose      = ws "]" ws
+BlockOpen      = ws "{" ws EndOfLine? { indentCount += 1; return ''; }
+BlockClose     = ws "}" ws { return ''; }
+ParensOpen     = ws "(" ws
+ParensClose    = ws ")" ws
+BraceOpen      = ws "[" ws
+BraceClose     = ws "]" ws
 
-Coma            = ws "," ws
-Dot             = "." ws
-AssignationOp   = ws "=" ws
-Colon           = ws ":" ws
-EmptyStatement  = ""
+Coma           = ws "," ws
+Dot            = "." ws
+AssignationOp  = ws "=" ws
+Colon          = ws ":" ws
+EmptyStatement = ""
 
 Statement
   = ws
@@ -90,7 +88,7 @@ Statement
     / EmptyStatement
     )
     EndOfLine
-  { return createNode('Statement', body || [], text()); }
+  { return createNode('Statement', body, text()); }
 
 ParensExpression
   = ParensOpen
@@ -100,10 +98,10 @@ ParensExpression
 
 Expression
   = Assignation
-  / Operation
   / BooleanExpr
-  / Return
+  / Operation
   / Assignable
+  / Return
 
 Assignation "Assignation"
   = head:(
@@ -123,8 +121,8 @@ ParensAssignable "ParensAssignable"
   { return createNode('ParensAssignable', _.compact([ass])); }
 
 Assignable "Assignable"
-  = Literal
-  / ComputedProperty
+  = ComputedProperty
+  / Literal
   / If
   / Try
   / Throw
@@ -132,9 +130,9 @@ Assignable "Assignable"
   / For
   / Array
   / Object
-  / FunctionCall
   / FunctionDeclaration
   / Unary
+  / FunctionCall
   / Not
   / Identifier
 
@@ -160,26 +158,25 @@ Operator
     / "*"
     / "/"
     )
-    eq:"="?
-  { return createNode('Operator', [], op + (eq || '')); }
+    "="?
+  { return createNode('Operator', [], op); }
 
 Block
   = body:(
-      BlockBraces
-    / ass:Expression { return createNode('Statement', ass) }
-    / "" { return [] }
+      ass:Expression { return createNode('Statement', ass) }
+    / BlockBraces
     )
   { return createNode('Block', body); }
-
-BlockBraces "Block"
-  = IndentBlockOpen
-    body:Statement+
-    IndentBlockClose
-  { return body; }
 
 FunctionBlock
   = block:Block
   { return createNode('FunctionBlock', block.children); }
+
+BlockBraces "Block"
+  = BlockOpen
+    body:Statement+
+    BlockClose
+  { return body; }
 
 FunctionDeclaration "FunctionDeclaration"
   = args:FunctionArguments?
@@ -273,7 +270,6 @@ CallArgComa
 Object
   =obj:(
       EmptyObject
-    / IndentObjectBlock
     / ObjectBlock
     / ObjectProperties
     )
@@ -287,12 +283,6 @@ ObjectBlock
   = BlockOpen
     body: (ObjectPropertyLine / ObjectDestructPropertyComa)*
     BlockClose
-  { return body; }
-
-IndentObjectBlock
-  = IndentBlockOpen
-    body: (ObjectPropertyLine / ObjectDestructPropertyComa)*
-    IndentBlockClose
   { return body; }
 
 ObjectProperties
@@ -398,8 +388,6 @@ ComputedProperty
       Literal
     / FunctionCall
     / Identifier
-    / Array
-    / Object
     )
     prop:PossibleComputedProperties+
   { return createNode('ComputedProperties', _.compact([id, ...prop])); }
@@ -432,8 +420,8 @@ ComputedPropertiesDots
 ComputedPropertiesTypes
   = Literal
   / ComputedProperty
-  / FunctionCall
   / Operation
+  / FunctionCall
   / Identifier
 
 NumericComputedProperty

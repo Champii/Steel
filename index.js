@@ -1,2 +1,1 @@
-// module.exports = require('./src');
-module.exports = require('./lib/compiled');
+module.exports = require('./lib');
