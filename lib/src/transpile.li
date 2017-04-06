@@ -58,7 +58,7 @@ tokens.Assignation = (node) ->
   res = transpile node.children
   text = ''
 
-  if !variables.includes(res[0]) and node.children[0].symbol isnt 'ComputedProperties'
+  if !hasVariable(res[0]) and node.children[0].symbol isnt 'ComputedProperties'
     text += 'let '
     addVariable res[0]
 
