@@ -1,6 +1,6 @@
 {
-  "name": "lightscript",
-  "version": "0.0.1",
+  "name": "steel-lang",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "author": "",
@@ -22,7 +22,7 @@
     "mocha": "^3.2.0"
   },
   "bin": {
-    "lts": "./bin/lts.js"
+    "sc": "./bin/sc.js"
   },
   "scripts": {
     "test": "mocha test"

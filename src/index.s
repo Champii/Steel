@@ -40,4 +40,4 @@ exports._transpileStringToTs = (input) ->
 
   Promise.resolve transpiled
 
-hook.hook '.li', (input, file) -> exports.transpile input, file .output
+hook.hook '.s', (input, file) -> exports.transpile input, file .output

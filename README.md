@@ -1,4 +1,6 @@
-# LightScript
+# Steel
+## Strongly Typed Experimental Expressive Language
+
 Language that transpile to TypeScript
 
 Inspired from LiveScript

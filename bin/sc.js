@@ -5,25 +5,25 @@ var path = require('path');
 var hook = require('node-hook');
 var walk = require('walk');
 var async = require('async');
-var lightscript = require('..');
+var steel = require('..');
 argv.version('0.0.1').usage('[options] <files ...>').option('-c, --compile', 'Compile files').option('-p, --print', 'Print files').option('-o, --output <folder>', 'File/folder of output').option('-s, --strict', 'Disallow implicite use of <Any> type').option('-t, --typecript', 'Output Typescript instead of Javascript').parse(process.argv);
 var paths = argv.args;
 var transpile = function (files) {
-    return lightscript.transpileFiles(files)["catch"](function (err) {
+    return steel.transpileFiles(files)["catch"](function (err) {
         console.log(err);
         return process.exit(1);
     });
 };
-var compilePath = path.resolve('./');
+var compilePath = null;
 var walkPath = function (filePath, done) {
     files = {};
     var fileWalker = function (root, fileStats, next) {
         var resPath = path.resolve(root, fileStats.name);
-        var outPath = resPath.replace(resPath, compilePath);
+        var outPath = resPath.replace(filePath, compilePath);
         var ext = path.extname(fileStats.name);
-        if (ext === '.li') {
+        if (ext === '.s') {
             files[fileStats.name] = resPath;
-            fs.mkdirpSync(root);
+            fs.mkdirpSync(path.dirname(outPath));
         }
         return next();
     };
@@ -35,7 +35,7 @@ var walkPath = function (filePath, done) {
 };
 if (argv.compile) {
     if (argv.output) {
-        compilePath = path.resolve('./', argv.output);
+        compilePath = argv.output;
     }
     async.map(paths, function (filePath, done) {
         var ext = path.extname(filePath);
@@ -43,14 +43,12 @@ if (argv.compile) {
             return done(null, path.resolve('./', filePath));
         }
         return walkPath(filePath, function (res) {
-            return done(null, Object.keys(res).map(function (key) {
-                return res[key];
-            }));
+            return done(null, _.values(res));
         });
     }, function (err, res) {
         return transpile(_.flatten(res)).then(function (fileArr) {
             return fileArr.map(function (file) {
-                var resPath = path.resolve(file.dirname, file.filename);
+                var resPath = path.resolve(compilePath, file.filename);
                 return fs.writeFileSync(resPath, file.output);
             });
         });

@@ -5,7 +5,7 @@ path        = require 'path'
 hook        = require 'node-hook'
 walk        = require 'walk'
 async       = require 'async'
-lightscript = require '..'
+steel       = require '..'
 
 argv
   .version '0.0.1'
@@ -20,24 +20,24 @@ argv
 paths = argv.args
 
 transpile = (files) ->
-  lightscript
+  steel
   .transpileFiles(files)
   .catch (err) ->
     console.log err
     process.exit 1
 
-compilePath = path.resolve './'
+compilePath = null
 
 walkPath = (filePath, done) ->
   files = {}
 
   fileWalker = (root, fileStats, next) ->
     resPath = path.resolve root, fileStats.name
-    outPath = resPath.replace(resPath, compilePath)
+    outPath = resPath.replace filePath, compilePath
     ext = path.extname fileStats.name
-    if ext is '.li'
+    if ext is '.s'
       files[fileStats.name] = resPath
-      fs.mkdirpSync root
+      fs.mkdirpSync path.dirname outPath
     next!
 
   walker = fs.walk filePath, {}
@@ -48,7 +48,7 @@ walkPath = (filePath, done) ->
 
 if argv.compile
   if argv.output
-    compilePath = path.resolve './', argv.output
+    compilePath = argv.output
 
   async.map paths, (filePath, done) ->
     ext = path.extname(filePath)
@@ -57,13 +57,13 @@ if argv.compile
       return done null, path.resolve './', filePath
 
     walkPath filePath, (res) ->
-      done null, Object.keys res .map (key) -> res[key]
+      done null, _.values res
 
   , (err, res) ->
     transpile(_.flatten res)
     .then (fileArr) ->
       fileArr.map (file) ->
-        resPath = path.resolve file.dirname, file.filename
+        resPath = path.resolve compilePath, file.filename
         fs.writeFileSync resPath, file.output
 
 else

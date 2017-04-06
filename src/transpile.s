@@ -299,15 +299,12 @@ tokens.While = (node) ->
 tokens.For = (node) ->
   res = transpile(node.children)
 
-  console.log(res)
   condition = res.shift()
 
   `for (${condition}) ${res.join('')}\n`
 
 tokens.ForCond = (node) ->
   res = transpile(node.children)
-
-  console.log(res)
 
   `${res.join('')}`
 

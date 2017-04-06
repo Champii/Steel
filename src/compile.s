@@ -5,16 +5,17 @@ ts   = require 'typescript'
 libSource = fs.readFileSync(path.join(path.dirname(require.resolve('typescript')), 'lib.d.ts')).toString()
 
 createCompilerHost = (inputs, outputs) ->
-  getSourceFile: (filename, languageVersion) -> ts.createSourceFile filename, inputs[filename], ts.ScriptTarget.ES6, '0'
-  writeFile: (name, text, writeByteOrderMark) -> outputs[name] = text
-  getDefaultLibFileName: -> 'lib.d.ts'
-  useCaseSensitiveFileNames: -> false
-  getCanonicalFileName: (filename) -> filename
-  getCurrentDirectory: -> ''
-  getNewLine: -> '\n'
+  return
+    getSourceFile: (filename, languageVersion) -> ts.createSourceFile filename, inputs[filename], ts.ScriptTarget.ES6, '0'
+    writeFile: (name, text, writeByteOrderMark) -> outputs[name] = text
+    getDefaultLibFileName: -> 'lib.d.ts'
+    useCaseSensitiveFileNames: -> false
+    getCanonicalFileName: (filename) -> filename
+    getCurrentDirectory: -> ''
+    getNewLine: -> '\n'
 
 module.exports = (file) ->
-  filename = path.basename file, '.li'
+  filename = path.basename file, '.s'
   dirname  = path.dirname file
 
   return (input) ->

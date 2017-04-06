@@ -11,10 +11,7 @@ whitespace = ' '
 
 transpile = (filename, input) ->
   try
-    console.log 'lol'
-    a = parser.parse input
-
-    return a
+    return parser.parse input
   catch e
     if e.location != null
       locationLength = e.location.end.offset - e.location.start.offset
