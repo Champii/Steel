@@ -26,14 +26,17 @@ transpile = (files) ->
     console.log err
     process.exit 1
 
-compilePath = './'
+compilePath = null
 
 walkPath = (filePath, done) ->
   files = {}
 
   fileWalker = (root, fileStats, next) ->
     resPath = path.resolve root, fileStats.name
-    outPath = resPath.replace filePath, compilePath
+    outPath = resPath
+    if compilePath
+      outPath = resPath.replace filePath, compilePath
+
     ext = path.extname fileStats.name
     if ext is '.s'
       files[fileStats.name] = resPath
@@ -53,8 +56,9 @@ if argv.compile
   async.map paths, (filePath, done) ->
     ext = path.extname(filePath)
 
-    if ext isnt ''
-      return done null, path.resolve './', filePath
+    if ext is '.s'
+      fs.mkdirpSync path.dirname path.resolve compilePath || '', filePath
+      return done null, [path.resolve './', filePath]
 
     walkPath filePath, (res) ->
       done null, _.values res
@@ -63,7 +67,7 @@ if argv.compile
     transpile(_.flatten res)
     .then (fileArr) ->
       fileArr.map (file) ->
-        resPath = path.resolve compilePath, file.filename
+        resPath = path.resolve compilePath || '', file.filename
         fs.writeFileSync resPath, file.output
 
 else

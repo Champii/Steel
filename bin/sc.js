@@ -15,12 +15,15 @@ var transpile = function (files) {
         return process.exit(1);
     });
 };
-var compilePath = './';
+var compilePath = null;
 var walkPath = function (filePath, done) {
     files = {};
     var fileWalker = function (root, fileStats, next) {
         var resPath = path.resolve(root, fileStats.name);
-        var outPath = resPath.replace(filePath, compilePath);
+        var outPath = resPath;
+        if (compilePath) {
+            outPath = resPath.replace(filePath, compilePath);
+        }
         var ext = path.extname(fileStats.name);
         if (ext === '.s') {
             files[fileStats.name] = resPath;
@@ -40,8 +43,9 @@ if (argv.compile) {
     }
     async.map(paths, function (filePath, done) {
         var ext = path.extname(filePath);
-        if (ext !== '') {
-            return done(null, path.resolve('./', filePath));
+        if (ext === '.s') {
+            fs.mkdirpSync(path.dirname(path.resolve(compilePath || '', filePath)));
+            return done(null, [path.resolve('./', filePath)]);
         }
         return walkPath(filePath, function (res) {
             return done(null, _.values(res));
@@ -49,7 +53,7 @@ if (argv.compile) {
     }, function (err, res) {
         return transpile(_.flatten(res)).then(function (fileArr) {
             return fileArr.map(function (file) {
-                var resPath = path.resolve(compilePath, file.filename);
+                var resPath = path.resolve(compilePath || '', file.filename);
                 return fs.writeFileSync(resPath, file.output);
             });
         });
