@@ -31,7 +31,7 @@ tokens.Statement = (node) ->
 
   text = `${res.join('')}`
 
-  if ['If', 'Try'].includes(node.children[0].symbol)
+  if ['If', 'Try', 'While', 'For'].includes(node.children[0].symbol)
     return `${text}`
 
   if !res[0]
@@ -306,7 +306,7 @@ tokens.For = (node) ->
 tokens.ForCond = (node) ->
   res = transpile(node.children)
 
-  `${res.join('')}`
+  `${res.join(';')}`
 
 tokens.Test = (node) ->
   res = transpile(node.children)

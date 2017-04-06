@@ -20,7 +20,8 @@ exports.transpileFiles = (files) -> bluebird.mapSeries files, exports.transpileF
 exports.transpileFile = (file) ->
   fs
     .readFileAsync(file)
-    .then (input) -> exports.transpile input, file
+    .then((input) -> exports.transpile input, file)
+    .catch(console.error)
 
 exports.transpile = (input, file) ->
   preprocessed   = preproc input

@@ -36,13 +36,12 @@ module.exports = (file) ->
       message = ts.flattenDiagnosticMessageText diagnostic.messageText, '\n'
       `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`
 
+    exitCode = 0
     if emitResult.emitSkipped
       exitCode = 1
-    else
-      exitCode = 0
 
     if exitCode
-      Promise.reject errs.join '\n'
+      return Promise.reject errs.join '\n'
 
     return
       filename: `${filename}.js`
