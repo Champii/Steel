@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var _ = require('lodash');
 var fs = require('fs.extra');
 var argv = require('commander');
@@ -14,7 +15,7 @@ var transpile = function (files) {
         return process.exit(1);
     });
 };
-var compilePath = null;
+var compilePath = './';
 var walkPath = function (filePath, done) {
     files = {};
     var fileWalker = function (root, fileStats, next) {

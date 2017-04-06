@@ -26,7 +26,7 @@ transpile = (files) ->
     console.log err
     process.exit 1
 
-compilePath = null
+compilePath = './'
 
 walkPath = (filePath, done) ->
   files = {}
