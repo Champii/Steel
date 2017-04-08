@@ -28,7 +28,7 @@ describe('Types', () => {
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo = function (a:number,b:string) {
+          expect(res).to.eq(`let foo = function (a:number, b:string) {
   return a;
 };
 `);
@@ -59,7 +59,7 @@ foo = (a, b) -> a`;
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo:(a:number,b:number) => number = function (a,b) {
+          expect(res).to.eq(`let foo:(a:number,b:number) => number = function (a, b) {
   return a;
 };
 `);

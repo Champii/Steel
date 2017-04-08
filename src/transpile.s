@@ -19,6 +19,7 @@ tokens.TypeAssignation = (node) ->
   res = transpile node.children
 
   variable = res.shift()
+
   types[variable] = res[0]
 
   ''
@@ -46,7 +47,7 @@ applyTypes = (type, node) ->
   if type.length is 1
     return `:${type[0]}`
 
-  argsNode = transpile(node.findSymbol('FunctionArgument').children[0].children)[0]
+  argsNode = transpile node.children[1].children[0].children[0].children
 
   returnType = type.pop()
 
@@ -62,9 +63,9 @@ tokens.Assignation = (node) ->
     text += 'let '
     addVariable res[0]
 
-  if res[1][0] === ':'
-    res[0] = `${res[0]}${res[1]}`
-    res.splice(1, 1)
+  if res[2]
+    res[0] = `${res[0]}:${res[2]}`
+    res.splice 2, 1
   else if types[res[0]]
     res[0] = `${res[0]}${applyTypes(types[res[0]], node)}`
 
