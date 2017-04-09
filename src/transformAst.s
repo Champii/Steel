@@ -41,6 +41,22 @@ tokens.FunctionDeclaration = (node) ->
 
   node
 
+tokens.ClassMethod = tokens.FunctionDeclaration
+
+tokens.ClassMethodDeclaration = (node) ->
+
+  # console.log util.inspect node, depth: null
+
+  if node.children.0.literal is 'constructor'
+    funcElems = node.children.1.children.0.children
+    body = _.findIndex funcElems, (elem) -> elem.symbol is 'FunctionBlock'
+    funcElems.splice body, 0, createNode 'NoReturn', [], '!'
+
+  # console.log util.inspect node, depth: null
+  node.children = visit node.children
+
+  node
+
 visit = (nodes) ->
   if !nodes.length
     return []

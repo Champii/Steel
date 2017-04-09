@@ -392,10 +392,27 @@ tokens.ClassMethodDeclaration = (node) ->
 
   `${res.join('')}\n`
 
-tokens.ClassMethod = (node) ->
+tokens.ClassPropertyDeclaration = (node) ->
   res = transpile(node.children)
 
-  `${res.join('')}\n`
+  `${res.join(' = ')};\n`
+
+tokens.ClassMethod = (node) ->
+  res = _.compact transpile(node.children[0].children)
+
+  args = '()'
+  if res.length > 1
+    args = res.shift!
+
+  res.unshift('{\n')
+  res.push(`${_.repeat(' ', currentBlockIndent - 2)}}`)
+
+  `${args} ${res.join('')}\n`
+
+tokens.New = (node) ->
+  res = transpile(node.children)
+
+  `new ${res.join('')}`
 
 tokens.Import = (node) ->
   res = transpile(node.children)

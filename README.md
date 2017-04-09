@@ -1,9 +1,47 @@
 # Steel
-## Strongly Typed Experimental Expressive Language
+### Strongly Typed Experimental Expressive Language
 
-Language that transpile to TypeScript
+Language that transpile to TypeScript and JavaScript
+
+Steel is a bootstraped language. That means the code itself is developed in Steel.
+
+Check ./src folder for sources
 
 Inspired from LiveScript
+
+## Install
+  ```bash
+  npm install -g steel-lang
+  ```
+
+## Compiler usage
+### Compile and execute on the fly
+  ```bash
+  sc file.s
+  ```
+
+  Files extensions are `.s`. This extension is registered inside NodeJS when loading `steel-lang` to auto-compile steel files on the fly when required
+
+### Compile a file/folder
+  ```bash
+  sc -c file1.s file2.s
+  sc -c folder
+  ```
+
+  If a folder is given, every files inside will be recursively compiled and will stay at their original path. See `-o` option below to set a different output directory.
+
+### Compile to a diferent output
+  ```bash
+  sc -o dir -c file1.s file2.s
+  sc -o dir -c folder
+  ```
+
+  Will output compiled files into `dir` folder.
+
+  If the folder doesnt exists, it is created on the fly.
+
+  The arborescence is recreated if a folder is recursively compiled.
+
 
 ## Features
 
@@ -95,6 +133,11 @@ Inspired from LiveScript
     obj.a.b(a.b).1.c!.f 1, 2 .d
   ```
 
+* Array
+  ```livescript
+    arr = [1, 2, 3]
+  ```
+
 * Class
   * Property declaration
     ```livescript
@@ -118,12 +161,44 @@ Inspired from LiveScript
 
 * For / While
   ```livescript
-  for a < b
+  while a < b
     a = a + 1
+
+  for i = 0; i < 10; i++
+    console.log i
   ```
 
-* is / isnt for === / !==
+* Try / Catch
+  ```livescript
+  try
+    a = JSON.parse foo
+  catch e
+    console.error e
+  ```
+
+
+* 'is / isnt' become '=== / !=='
+* 'and / or' become '&& / ||'
 * Arithmetic operations
+
+* Import
+  ```livescript
+  import
+    fs
+    lodash: _
+    path: { resolve }
+    './foo/bar'
+  ```
+
+  Become
+
+  ```typescript
+  import fs = require('fs');
+  import _ = require('lodash');
+  import _path = require('path');
+  let {resolve} = _path;
+  import bar = require('./foo/bar');
+  ```
 
 ## Exemples
 
@@ -166,10 +241,8 @@ const nonReturning = function () {
 
 ```livescript
 class Foo
-  a: number
   a: 1
 
-  b: string -> string
   b: (arg) -> 'bar'
 ```
 
@@ -177,12 +250,30 @@ Transpile into
 
 ```typescript
 class Foo {
-  a: string = 1
-  b(arg: string): string {
+  a = 1
+  b(arg) {
     return 'bar';
   }
 }
 ```
 
 TODO:
+  * Solve bug with variable scope declaration
   * Inline function return type declaration
+  * Class types for methods and properties
+  * Interface and abstract
+  * Add tests for
+    - If
+    - Else
+    - For
+    - While
+    - Not
+    - Class
+    - New
+    - Import
+    - Try/Catch
+    - TestOps
+    - Unary
+    - Operation
+    - Return
+    - Throw
