@@ -1,19 +1,21 @@
 _    = require 'lodash'
 fs   = require 'fs'
-path = require 'path'
 ts   = require 'typescript'
+path = require 'path'
 
-libSource = fs.readFileSync(path.join(path.dirname(require.resolve('typescript')), 'lib.d.ts')).toString!
-es2015Source = fs.readFileSync(path.join(path.dirname(require.resolve('typescript')), 'lib.es2015.d.ts')).toString!
-es7Source = fs.readFileSync(path.join(path.dirname(require.resolve('typescript')), 'lib.es2016.d.ts')).toString!
-nodeSource = fs.readFileSync(path.resolve '.', './typings/globals/node/index.d.ts').toString!
+tsPath       = path.dirname require.resolve 'typescript'
+
+libSource    = fs.readFileSync(path.join(tsPath, 'lib.d.ts')).toString!
+es2015Source = fs.readFileSync(path.join(tsPath, 'lib.es2015.d.ts')).toString!
+es7Source    = fs.readFileSync(path.join(tsPath, 'lib.es2016.d.ts')).toString!
+nodeSource   = fs.readFileSync(path.resolve '.', './typings/globals/node/index.d.ts').toString!
 
 createCompilerHost = (inputs, outputs) ->
   return
     getSourceFile: (filename, languageVersion) ->
       file = inputs[filename]
       if filename.substr(0, 4) is 'lib.'
-        file = fs.readFileSync(path.join(path.dirname(require.resolve('typescript')), filename)).toString!
+        file = fs.readFileSync(path.join(tsPath, filename)).toString!
 
       ts.createSourceFile filename, file, ts.ScriptTarget.ES6, '0'
 
