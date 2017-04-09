@@ -1,35 +1,53 @@
+_    = require 'lodash'
 fs   = require 'fs'
-path = require 'path'
 ts   = require 'typescript'
+path = require 'path'
 
-libSource = fs.readFileSync(path.join(path.dirname(require.resolve('typescript')), 'lib.d.ts')).toString()
+tsPath       = path.dirname require.resolve 'typescript'
+
+libSource    = fs.readFileSync(path.join(tsPath, 'lib.d.ts')).toString!
+es2015Source = fs.readFileSync(path.join(tsPath, 'lib.es2015.d.ts')).toString!
+es7Source    = fs.readFileSync(path.join(tsPath, 'lib.es2016.d.ts')).toString!
+nodeSource   = fs.readFileSync(path.resolve '.', './typings/globals/node/index.d.ts').toString!
 
 createCompilerHost = (inputs, outputs) ->
   return
-    getSourceFile: (filename, languageVersion) -> ts.createSourceFile filename, inputs[filename], ts.ScriptTarget.ES6, '0'
+    getSourceFile: (filename, languageVersion) ->
+      file = inputs[filename]
+      if filename.substr(0, 4) is 'lib.'
+        file = fs.readFileSync(path.join(tsPath, filename)).toString!
+
+      ts.createSourceFile filename, file, ts.ScriptTarget.ES6, '0'
+
     writeFile: (name, text, writeByteOrderMark) -> outputs[name] = text
     getDefaultLibFileName: -> 'lib.d.ts'
     useCaseSensitiveFileNames: -> false
     getCanonicalFileName: (filename) -> filename
     getCurrentDirectory: -> ''
     getNewLine: -> '\n'
+    fileExists: ->
 
 module.exports = (file) ->
   filename = path.basename file, '.s'
   dirname  = path.dirname file
 
   return (input) ->
-    inputs =
+    input = '/// <reference path=\"node.d.ts\" />\n' + input
+
+    filesIn =
       `${filename}.ts`: input
       'lib.d.ts': libSource
-    outputs = {}
+      'node.d.ts': nodeSource
+      'ES2015.ts': es2015Source
+      'ES2016.ts': es7Source
+    filesOut = {}
 
-    compilerHost = createCompilerHost inputs, outputs
-    program = ts.createProgram [`${filename}.ts`], { target: ts.ScriptTarget.ES6, module: ts.ModuleKind.AMD }, compilerHost
+    compilerHost = createCompilerHost filesIn, filesOut
+    program = ts.createProgram [`${filename}.ts`], { target: ts.ScriptTarget.ES6, module: ts.ModuleKind.CommonJS, lib: ['ES2015', 'ES2016'] }, compilerHost
 
     emitResult = program.emit!
 
-    allDiagnostics = emitResult.diagnostics
+    allDiagnostics = ts.getPreEmitDiagnostics program .concat emitResult.diagnostics
 
     errs = allDiagnostics.map (diagnostic) ->
       { line, character } = diagnostic.file.getLineAndCharacterOfPosition diagnostic.start
@@ -40,11 +58,12 @@ module.exports = (file) ->
     if emitResult.emitSkipped
       exitCode = 1
 
-    if exitCode
+    errs = _.compact errs
+
+    if errs.length or exitCode
       return Promise.reject errs.join '\n'
 
     return
       filename: `${filename}.js`
       dirname
-      output: outputs[`${filename}.js`]
-
+      output: filesOut[`${filename}.js`]

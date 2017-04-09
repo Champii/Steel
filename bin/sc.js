@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/// <reference path="node.d.ts" />
 var _ = require('lodash');
 var fs = require('fs.extra');
 var argv = require('commander');

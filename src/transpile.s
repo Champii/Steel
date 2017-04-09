@@ -1,24 +1,26 @@
 _       = require 'lodash'
 ts      = require 'typescript'
 util    = require 'util'
+path    = require 'path'
 
-tokens    = {}
-variables = [[]]
-types     = {}
+tokens: any = {}
+variables   = [[]]
+types       = {}
 
 currentBlockIndent = 0
 
-hasVariable = (variable) ->
-  _.some variables, (scope) -> scope.includes variable
+hasVariable = (vari) ->
+  _.some variables, (scope) -> scope.includes vari
 
 pushScope = -> variables.push []
 popScope  = -> variables.pop!
-addVariable = (variable) -> variables[variables.length - 1].push variable
+addVariable = (vari) -> variables[variables.length - 1].push vari
 
 tokens.TypeAssignation = (node) ->
   res = transpile node.children
 
   variable = res.shift()
+
   types[variable] = res[0]
 
   ''
@@ -31,7 +33,7 @@ tokens.Statement = (node) ->
 
   text = `${res.join('')}`
 
-  if ['If', 'Try', 'While', 'For'].includes(node.children[0].symbol)
+  if ['Import', 'If', 'Try', 'While', 'For'].includes(node.children[0].symbol)
     return `${text}`
 
   if !res[0]
@@ -46,9 +48,17 @@ applyTypes = (type, node) ->
   if type.length is 1
     return `:${type[0]}`
 
-  argsNode = transpile(node.findSymbol('FunctionArgument').children[0].children)[0]
+  funcArgs = node.children[1].children[0].children[0]
+
+  argsNode = []
+
+  if funcArgs.symbol is 'FunctionArguments'
+    argsNode = transpile funcArgs.children
 
   returnType = type.pop()
+
+  if type.length isnt argsNode.length
+    throw 'Type declaration mismatch identifier declatation'
 
   argsTypes = argsNode.map((arg, i) -> `${arg}:${type[i]}`)
 
@@ -62,9 +72,9 @@ tokens.Assignation = (node) ->
     text += 'let '
     addVariable res[0]
 
-  if res[1][0] === ':'
-    res[0] = `${res[0]}${res[1]}`
-    res.splice(1, 1)
+  if res[2]
+    res[0] = `${res[0]}:${res[2]}`
+    res.splice 2, 1
   else if types[res[0]]
     res[0] = `${res[0]}${applyTypes(types[res[0]], node)}`
 
@@ -382,10 +392,80 @@ tokens.ClassMethodDeclaration = (node) ->
 
   `${res.join('')}\n`
 
-tokens.ClassMethod = (node) ->
+tokens.ClassPropertyDeclaration = (node) ->
   res = transpile(node.children)
 
-  `${res.join('')}\n`
+  `${res.join(' = ')};\n`
+
+tokens.ClassMethod = (node) ->
+  res = _.compact transpile(node.children[0].children)
+
+  args = '()'
+  if res.length > 1
+    args = res.shift!
+
+  res.unshift('{\n')
+  res.push(`${_.repeat(' ', currentBlockIndent - 2)}}`)
+
+  `${args} ${res.join('')}\n`
+
+tokens.New = (node) ->
+  res = transpile(node.children)
+
+  `new ${res.join('')}`
+
+tokens.Import = (node) ->
+  res = transpile(node.children)
+
+  `${res.join('')}`
+
+importNativeEs5 = (node) ->
+  id = node.children[0].literal
+  if node.children.length is 1
+    return `import * as ${id} from '${id}';\n`
+
+  fromId = node.children[1]
+  if fromId.children[0].symbol is 'Identifier'
+    return `import * as ${fromId.children[0].literal} from '${id}';\n`
+
+  return `import ${transpile(fromId.children).join('')} from '${id}';\n`
+
+importCommonJs = (node) ->
+  id = node.children[0].literal
+
+  if node.children[0].symbol is 'String'
+    id = id.substr 1, id.length - 2
+
+  if node.children.length is 1 and node.children[0].symbol is 'String'
+    val = id
+    if val.0 is '.' and val.1 is '/'
+      val = path.basename val
+    return `import ${val} = require('${id}');\n`
+
+  if node.children.length is 1
+    return `import ${id} = require('${id}');\n`
+
+  fromId = node.children[1]
+
+  if fromId.children[0].symbol is 'Identifier'
+    return `import ${fromId.children[0].literal} = require('${id}');\n`
+
+  if fromId.children[0].symbol is 'ObjectDestruct'
+    destruct = transpile(fromId.children).join('')
+    res = `import _${id} = require('${id}');\n`
+    res += `let ${destruct} = _${id};\n`
+    return res
+
+  return `import ${transpile(fromId.children).join('')} = require('${id}');\n`
+
+tokens.ImportLine = (node) ->
+  forcedVersion = 'common'
+
+  if forcedVersion is 'common'
+    return importCommonJs node
+  else if forcedVersion is 'native'
+    return importNativeEs5 node
+
 
 transpile = (nodes) ->
   if !nodes.length

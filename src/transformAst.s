@@ -1,7 +1,7 @@
 _    = require 'lodash'
 util = require 'util'
 
-tokens = {}
+tokens: any = {}
 
 createNode = (symbol, children, literal) ->
   if !_.isArray children
@@ -38,6 +38,22 @@ tokens.FunctionDeclaration = (node) ->
     return node
 
   lastStatement.children[0] = createNode 'Return', content, `return ${content.literal}`
+
+  node
+
+tokens.ClassMethod = tokens.FunctionDeclaration
+
+tokens.ClassMethodDeclaration = (node) ->
+
+  # console.log util.inspect node, depth: null
+
+  if node.children.0.literal is 'constructor'
+    funcElems = node.children.1.children.0.children
+    body = _.findIndex funcElems, (elem) -> elem.symbol is 'FunctionBlock'
+    funcElems.splice body, 0, createNode 'NoReturn', [], '!'
+
+  # console.log util.inspect node, depth: null
+  node.children = visit node.children
 
   node
 

@@ -19,15 +19,15 @@ exports.transpileFiles = (files) -> bluebird.mapSeries files, exports.transpileF
 
 exports.transpileFile = (file) ->
   fs
-    .readFileAsync(file)
-    .then((input) -> exports.transpile input, file)
-    .catch(console.error)
+  .readFileAsync(file)
+  .then((input) -> exports.transpile input, file)
 
 exports.transpile = (input, file) ->
   preprocessed   = preproc input
   ast            = generateAst file, preprocessed
   transformedAst = transformAst ast
   transpiled     = transpile transformedAst
+  console.log transpiled
   compileFunc    = compile file
   compiled       = compileFunc transpiled
 

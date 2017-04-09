@@ -78,6 +78,21 @@ describe('Objects', () => {
       ;
     });
 
+    it('should create object with shorthand syntax', () => {
+      const string = `foo =
+  a
+  b
+  c
+`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`let foo = {a, b, c};\n`);
+        })
+      ;
+    });
+
   });
 
   describe('Usage', () => {
