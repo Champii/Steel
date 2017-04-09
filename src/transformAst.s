@@ -1,7 +1,7 @@
 _    = require 'lodash'
 util = require 'util'
 
-tokens = {}
+tokens: any = {}
 
 createNode = (symbol, children, literal) ->
   if !_.isArray children
