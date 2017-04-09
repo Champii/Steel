@@ -47,9 +47,17 @@ applyTypes = (type, node) ->
   if type.length is 1
     return `:${type[0]}`
 
-  argsNode = transpile node.children[1].children[0].children[0].children
+  funcArgs = node.children[1].children[0].children[0]
+
+  argsNode = []
+
+  if funcArgs.symbol is 'FunctionArguments'
+    argsNode = transpile funcArgs.children
 
   returnType = type.pop()
+
+  if type.length isnt argsNode.length
+    throw 'Type declaration mismatch identifier declatation'
 
   argsTypes = argsNode.map((arg, i) -> `${arg}:${type[i]}`)
 

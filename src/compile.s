@@ -1,3 +1,4 @@
+_    = require 'lodash'
 fs   = require 'fs'
 path = require 'path'
 ts   = require 'typescript'
@@ -29,7 +30,7 @@ module.exports = (file) ->
 
     emitResult = program.emit!
 
-    allDiagnostics = emitResult.diagnostics
+    allDiagnostics = ts.getPreEmitDiagnostics program .concat emitResult.diagnostics
 
     errs = allDiagnostics.map (diagnostic) ->
       { line, character } = diagnostic.file.getLineAndCharacterOfPosition diagnostic.start
@@ -40,11 +41,12 @@ module.exports = (file) ->
     if emitResult.emitSkipped
       exitCode = 1
 
-    if exitCode
+    errs = _.compact errs
+
+    if errs.length or exitCode
       return Promise.reject errs.join '\n'
 
     return
       filename: `${filename}.js`
       dirname
       output: outputs[`${filename}.js`]
-
