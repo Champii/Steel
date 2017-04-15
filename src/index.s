@@ -4,7 +4,6 @@ tiny         = require 'tiny-parser'
 hook         = require 'node-hook'
 util         = require 'util'
 path         = require 'path'
-async        = require 'async'
 bluebird     = require 'bluebird'
 
 preproc      = require './preproc'

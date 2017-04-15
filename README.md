@@ -243,7 +243,7 @@ const nonReturning = function () {
 class Foo
   a: 1
 
-  b: (arg) -> 'bar'
+  b: (val: number) -> @a = val
 ```
 
 Transpile into
@@ -251,14 +251,14 @@ Transpile into
 ```typescript
 class Foo {
   a = 1
-  b(arg) {
-    return 'bar';
+  b(val:number) {
+    return this.a = val;
   }
 }
 ```
 
 TODO:
-  * Solve bug with variable scope declaration
+  * 'not' operator
   * Inline function return type declaration
   * Class types for methods and properties
   * Interface and abstract

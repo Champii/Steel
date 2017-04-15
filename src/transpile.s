@@ -68,7 +68,7 @@ tokens.Assignation = (node) ->
   res = transpile node.children
   text = ''
 
-  if !hasVariable(res[0]) and node.children[0].symbol isnt 'ComputedProperties'
+  if !hasVariable(res[0]) and !['ComputedProperty', 'ComputedPropertyDirect'].includes node.children[0].symbol
     text += 'let '
     addVariable res[0]
 
@@ -234,11 +234,6 @@ tokens.ArrayProperties = (node) ->
 
   `${res.join(', ')}`
 
-tokens.ComputedProperties = (node) ->
-  res = transpile(node.children)
-
-  res.join('')
-
 tokens.ComputedProperty = (node) ->
   res = transpile(node.children)
 
@@ -251,6 +246,11 @@ tokens.ComputedPropertiesDots = (node) ->
     return `${res.join('')}`
 
   `.${res.join('.')}`
+
+tokens.ComputedPropertyDirect = (node) ->
+  res = transpile(node.children)
+
+  res.join('.')
 
 tokens.ComputedPropertiesBraces = (node) ->
   res = transpile(node.children)
@@ -336,6 +336,11 @@ tokens.TestOp = (node) ->
   node.literal
 
 tokens.Unary = (node) ->
+  res = transpile(node.children)
+
+  res.join ''
+
+tokens.UnaryOp = (node) ->
   node.literal
 
 tokens.Not = (node) ->
@@ -390,12 +395,12 @@ tokens.ClassStatement = (node) ->
 tokens.ClassMethodDeclaration = (node) ->
   res = transpile(node.children)
 
-  `${res.join('')}\n`
+  `${res.join('')}`
 
 tokens.ClassPropertyDeclaration = (node) ->
   res = transpile(node.children)
 
-  `${res.join(' = ')};\n`
+  `${res.join(' = ')};`
 
 tokens.ClassMethod = (node) ->
   res = _.compact transpile(node.children[0].children)
@@ -407,12 +412,15 @@ tokens.ClassMethod = (node) ->
   res.unshift('{\n')
   res.push(`${_.repeat(' ', currentBlockIndent - 2)}}`)
 
-  `${args} ${res.join('')}\n`
+  `${args} ${res.join('')}`
 
 tokens.New = (node) ->
   res = transpile(node.children)
 
   `new ${res.join('')}`
+
+tokens.This = (node) ->
+  'this'
 
 tokens.Import = (node) ->
   res = transpile(node.children)
