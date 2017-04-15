@@ -414,6 +414,36 @@ tokens.ClassMethod = (node) ->
 
   `${args} ${res.join('')}`
 
+tokens.Interface = (node) ->
+  res = transpile(node.children)
+
+  `interface ${res.join(' ')}`
+
+tokens.InterfaceBlock = (node) ->
+  currentBlockIndent += 2
+
+  res = transpile(node.children)
+
+  indent = _.repeat(' ', currentBlockIndent)
+
+  currentBlockIndent -= 2
+
+  res = res.map((text) -> `${indent}${text}`)
+
+  res.unshift('{\n')
+  res.push(`${_.repeat(' ', currentBlockIndent)}}`)
+
+  res.join('')
+
+tokens.BlockTypeDeclaration = (node) ->
+  res = transpile(node.children)
+
+  ex = ''
+  if res.length is 3
+    ex = '?'
+
+  `${res[0]}${ex}:${res[1]};\n`
+
 tokens.New = (node) ->
   res = transpile(node.children)
 

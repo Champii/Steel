@@ -150,6 +150,12 @@ Inspired from LiveScript
     class Test
       b: -> 2
     ```
+* Interface
+  ```livescript
+  interface Test
+    a: number
+    b?: string
+  ```
 
 * If / Else
   ```livescript
@@ -242,8 +248,8 @@ const nonReturning = function () {
 ```livescript
 class Foo
   a: 1
-
-  b: (val: number) -> @a = val
+  b: -> 2
+  constructor: (val: number) -> @a = val
 ```
 
 Transpile into
@@ -251,17 +257,31 @@ Transpile into
 ```typescript
 class Foo {
   a = 1
-  b(val:number) {
-    return this.a = val;
+  b() {
+    return 1;
+  }
+  constructor(val:number) {
+    this.a = val;
   }
 }
 ```
 
 TODO:
+  * '?' operator
   * 'not' operator
   * Inline function return type declaration
+  * Inheritance
+  * implements
   * Class types for methods and properties
-  * Interface and abstract
+  * Class visibility (public, private,...)
+  * class static
+  * cast
+  * Generics
+  * readonly for interface
+  * propname for interface
+  * index for interface
+  * func type for interface
+  * abstract
   * Add tests for
     - If
     - Else
@@ -269,6 +289,7 @@ TODO:
     - While
     - Not
     - Class
+    - Interface
     - New
     - Import
     - Try/Catch
