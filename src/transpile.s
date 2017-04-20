@@ -80,6 +80,10 @@ tokens.Assignation = (node) ->
 
   `${text}${res.join(' = ')}`
 
+tokens.Existance = (node) ->
+  res = transpile node.children
+  `(${res[0]} != null)`
+
 tokens.ParensAssignable = (node) ->
   res = transpile node.children
 

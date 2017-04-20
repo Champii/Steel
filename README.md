@@ -5,9 +5,62 @@ Language that transpile to TypeScript and JavaScript
 
 Steel is a bootstraped language. That means the code itself is developed in Steel.
 
-Check ./src folder for sources
+Check ./src folder for steel sources
+Check ./lib for the compiled sources
 
-Inspired from LiveScript
+Highly inspired from [LiveScript](http://livescript.net/)
+
+## Exemples
+
+### Basics
+
+```livescript
+foo: number -> number -> number
+foo = (a, b) -> a + b
+
+bar = (c, d) ~>
+  if c? and d?
+    c + d
+  else
+    0
+
+nonReturning = !-> 1
+
+class Foo
+  a: 1
+  b: -> 2
+  constructor: (val: number) -> @a = val
+```
+
+Transpile into
+
+```typescript
+const foo: (a: number, b: number) => number = function (a, b) {
+  return a + b;
+};
+
+const bar = (c, d) => {
+  if ((c != null) && (d != null)) {
+    return c + d;
+  } else {
+    return 0;
+  }
+};
+
+const nonReturning = function () {
+  1;
+};
+
+class Foo {
+  a = 1
+  b() {
+    return 1;
+  }
+  constructor(val:number) {
+    this.a = val;
+  }
+}
+```
 
 ## Install
   ```bash
@@ -182,7 +235,8 @@ Inspired from LiveScript
     console.error e
   ```
 
-
+* 'not' stands for '!'
+* '?' for existance checks (!= null)
 * 'is / isnt' become '=== / !=='
 * 'and / or' become '&& / ||'
 * Arithmetic operations
@@ -267,9 +321,7 @@ class Foo {
 ```
 
 TODO:
-  * '?' operator
-  * 'not' operator
-  * Inline function return type declaration
+  * Return type declaration for Inline functions
   * Inheritance
   * implements
   * Class types for methods and properties
@@ -282,6 +334,9 @@ TODO:
   * index for interface
   * func type for interface
   * abstract
+  * method chaining |>
+  * function shorthand (+2)
+  * curry operator --> and ~~>
   * Add tests for
     - If
     - Else
@@ -298,3 +353,4 @@ TODO:
     - Operation
     - Return
     - Throw
+  * (Plugin system ?)
