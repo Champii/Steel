@@ -26,10 +26,14 @@ bar = (c: number, d: number): number ~>
 
 nonReturning = !-> 1
 
-class Foo
+class Animal
   a: 1
   b: -> 2
   constructor: (val: number) -> @a = val
+
+class Dog: Animal
+
+dog: Dog = new Dog
 ```
 
 Transpile into
@@ -51,7 +55,7 @@ const nonReturning = function () {
   1;
 };
 
-class Foo {
+class Animal {
   a = 1
   b() {
     return 1;
@@ -60,6 +64,10 @@ class Foo {
     this.a = val;
   }
 }
+
+class Dog extends Animal {};
+
+let dog: Dog = new Dog();
 ```
 
 ## Install
@@ -115,7 +123,7 @@ class Foo {
 * Inline type declaration
   ```livescript
   foo: number = 1
-  bar = (a: number, b: number) -> a + b
+  bar = (a: number, b: number): number -> a + b
   ```
 
 * Externalized type declaration
@@ -147,7 +155,7 @@ class Foo {
 
   * Argument types
     ```livescript
-    foo = (a:number, b: number) -> a + b
+    foo = (a:number, b: number):number -> a + b
     ```
 
 * Function call
@@ -192,17 +200,15 @@ class Foo {
   ```
 
 * Class
-  * Property declaration
-    ```livescript
-    class Test
-      a: 1
-    ```
+  ```livescript
+  class Animal
+    walk: -> 1
 
-  * Method declaration
-    ```livescript
-    class Test
-      b: -> 2
-    ```
+  class Dog: Animal
+    a: 1
+    walk: -> super.walk! + 1
+  ```
+
 * Interface
   ```livescript
   interface Test
@@ -260,71 +266,11 @@ class Foo {
   import bar = require('./foo/bar');
   ```
 
-## Exemples
-
-### Basics
-
-```livescript
-foo: number -> number -> number
-foo = (a, b) -> a + b
-
-bar = (c, d) ~>
-  if d isnt 0
-    c / d
-  else
-    0
-
-nonReturning = !-> 1
-```
-
-Transpile into
-
-```typescript
-const foo: (a: number, b: number) => number = function (a, b) {
-  return a + b;
-};
-
-const bar = (c, d) => {
-  if (d !== 0) {
-    return c / d;
-  } else {
-    return 0;
-  }
-};
-
-const nonReturning = function () {
-  1;
-};
-```
-
-### Classes
-
-```livescript
-class Foo
-  a: 1
-  b: -> 2
-  constructor: (val: number) -> @a = val
-```
-
-Transpile into
-
-```typescript
-class Foo {
-  a = 1
-  b() {
-    return 1;
-  }
-  constructor(val:number) {
-    this.a = val;
-  }
-}
-```
-
 TODO:
+  * Options for compiler
   * Transpile code in template strings
-  * Better scoped variables
+  * Better scoped variables (bug in 'let')
   * Better error system (more details, more accuracy)
-  * Inheritance
   * implements
   * Class types for methods and properties
   * Class visibility (public, private,...)

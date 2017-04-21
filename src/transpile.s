@@ -381,7 +381,17 @@ tokens.Throw = (node) ->
 tokens.Class = (node) ->
   res = transpile(node.children)
 
+  if node.children[node.children.length - 1].symbol is 'Extends'
+    res.splice 1, 0, res.pop!
+
+  if node.children[node.children.length - 1].symbol isnt 'ClassBlock'
+    res.push '{}'
+
   `class ${res.join(' ')}`
+
+tokens.Extends = (node) ->
+  res = transpile node.children
+  `extends ${res[0]}`
 
 tokens.ClassBlock = (node) ->
   currentBlockIndent += 2
