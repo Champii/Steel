@@ -140,11 +140,16 @@ tokens.Literal = (node) ->
   node.literal
 
 tokens.FunctionArguments = (node) ->
+  returnType = ''
+
+  if node.children.length and node.children[node.children.length - 1].symbol is 'FunctionReturnType'
+    returnType = `: ${node.children.pop().literal}`
+
   res = transpile(node.children)
 
   res.forEach addVariable
 
-  `(${res.join(', ')})`
+  `(${res.join(', ')})${returnType}`
 
 tokens.FunctionArgument = (node) ->
   res = transpile(node.children)
@@ -159,7 +164,6 @@ tokens.FunctionArgument = (node) ->
   arr
 
 functionManage = (node) ->
-
   res = transpile(node.children)
 
   args = '()'
@@ -172,6 +176,10 @@ functionManage = (node) ->
   res.unshift('{\n')
 
   [args, res]
+
+tokens.FunctionReturnType = (node) ->
+  res = transpile node.children
+  res.join('')
 
 tokens.FunctionExpression = (node) ->
   [args, res] = functionManage(node)

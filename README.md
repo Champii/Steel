@@ -18,7 +18,7 @@ Highly inspired from [LiveScript](http://livescript.net/)
 foo: number -> number -> number
 foo = (a, b) -> a + b
 
-bar = (c, d) ~>
+bar = (c: number, d: number): number ~>
   if c? and d?
     c + d
   else
@@ -39,7 +39,7 @@ const foo: (a: number, b: number) => number = function (a, b) {
   return a + b;
 };
 
-const bar = (c, d) => {
+const bar = (c: number, d: number): number => {
   if ((c != null) && (d != null)) {
     return c + d;
   } else {
@@ -321,7 +321,9 @@ class Foo {
 ```
 
 TODO:
-  * Return type declaration for Inline functions
+  * Transpile code in template strings
+  * Better scoped variables
+  * Better error system (more details, more accuracy)
   * Inheritance
   * implements
   * Class types for methods and properties
@@ -334,8 +336,10 @@ TODO:
   * index for interface
   * func type for interface
   * abstract
+  * Curry operator (--> and ~~>)
   * method chaining |>
   * function shorthand (+2)
+  * Better multiline chaining of ComputedProperty
   * curry operator --> and ~~>
   * Add tests for
     - If
