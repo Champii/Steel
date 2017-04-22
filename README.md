@@ -1,14 +1,25 @@
 # Steel
 ### Strongly Typed Experimental Expressive Language
 
-Language that transpile to TypeScript and JavaScript
+Language that transpile to TypeScript and JavaScript.
 
 Steel is a bootstraped language. That means the code itself is developed in Steel.
 
-Check ./src folder for steel sources
-Check ./lib for the compiled sources
+Check ./src folder for steel sources.
+Check ./lib for the compiled sources.
 
-Highly inspired from [LiveScript](http://livescript.net/)
+Highly inspired from [LiveScript](http://livescript.net/).
+
+## Goals
+
+This language tries to implement strong static typing over a subset of Livescript.
+
+To do so, it transpile first to TypeScript, and let it transpile to Javascript.
+This allow to use the power of a well typed and designed language while smoothing its syntax.
+
+It alse tries not to fall into the same 'over-simplification' Livescript does, and avoid to implement features complexifying the read and understanding of the code.
+
+At term, this language aim to be more functional, and might borrow some concepts from language like Haskell or Ocaml (custom operator?, immutability?, infinite lists?, ...).
 
 ## Exemples
 
@@ -25,6 +36,11 @@ bar = (c: number, d: number): number ~>
     0
 
 nonReturning = !-> 1
+
+array = [1, 2, 3]
+array
+  |> map (a) -> a + 2
+  |> map (a) -> a * 2
 
 class Animal
   a: 1
@@ -51,6 +67,10 @@ const bar = (c: number, d: number): number => {
   }
 };
 
+[1, 2, 3]
+  |> map (a) -> a + 2
+  |> map (a) -> a * 2
+
 const nonReturning = function () {
   1;
 };
@@ -76,12 +96,15 @@ let dog: Dog = new Dog();
   ```
 
 ## Compiler usage
+
+Compiler name is `sc`, and stands for `Steel Compiler`.
+
 ### Compile and execute on the fly
   ```bash
   sc file.s
   ```
 
-  Files extensions are `.s`. This extension is registered inside NodeJS when loading `steel-lang` to auto-compile steel files on the fly when required
+  Files extensions are `.s`. This extension is registered inside NodeJS when loading `steel-lang` to auto-compile steel files on the fly when required.
 
 ### Compile a file/folder
   ```bash
@@ -290,12 +313,11 @@ TODO:
   * index for interface
   * func type for interface
   * abstract
-  * method chaining |>
   * function shorthand (+2)
   * Better multiline chaining of ComputedProperty
-  * curry operator --> and ~~>
   * Std lib
   * Split grammar
+  * Multiline string
   * Add tests for
     - If
     - Else
@@ -312,4 +334,9 @@ TODO:
     - Operation
     - Return
     - Throw
+    - Existance
+    - Inheritance
+    - Curry
+    - Not
+    - ChainedCall
   * (Plugin system ?)

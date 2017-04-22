@@ -486,6 +486,12 @@ tokens.New = (node) ->
 
   `new ${res.join('')}`
 
+tokens.ChainedCall = (node) ->
+  res = transpile(node.children)
+  res = _.reduce res, (acc, i) -> `(${i}${acc})`, ''
+
+  res
+
 tokens.This = (node) ->
   'this'
 
