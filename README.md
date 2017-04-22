@@ -37,8 +37,7 @@ bar = (c: number, d: number): number ~>
 
 nonReturning = !-> 1
 
-array = [1, 2, 3]
-array
+[1, 2, 3]
   |> map (a) -> a + 2
   |> map (a) -> a * 2
 
@@ -67,9 +66,11 @@ const bar = (c: number, d: number): number => {
   }
 };
 
-[1, 2, 3]
-  |> map (a) -> a + 2
-  |> map (a) -> a * 2
+map((function (a) {
+  return a * 2;
+}), map((function (a) {
+  return a + 2;
+}), [1, 2, 3]));
 
 const nonReturning = function () {
   1;
@@ -205,6 +206,13 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   add = (a, b) --> a + b
   add5 = add 5
   add5 5 # === 10
+  ```
+
+* Chained calls
+  ```livescript
+  [1, 2, 3]
+    |> map (a) -> a + 2
+    |> map (a) -> a * 2
   ```
 
 * Objects
