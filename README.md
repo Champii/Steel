@@ -38,8 +38,8 @@ bar = (c: number, d: number): number ~>
 nonReturning = !-> 1
 
 [1, 2, 3]
-  |> map (a) -> a + 2
-  |> map (a) -> a * 2
+  |> map (+ 2)
+  |> filter (> 2)
 
 class Animal
   a: 1
@@ -66,10 +66,10 @@ const bar = (c: number, d: number): number => {
   }
 };
 
-map((function (a) {
-  return a * 2;
-}), map((function (a) {
-  return a + 2;
+filter((function (it) {
+  return it > 2;
+}), map((function (it) {
+  return it + 2;
 }), [1, 2, 3]));
 
 const nonReturning = function () {
@@ -208,11 +208,21 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   add5 5 # === 10
   ```
 
+* Shorthand function declaration
+  ```livescript
+  add2 = (+ 2)
+  add2 2 # === 4
+
+  obj = a: 1
+  getA = (.a)
+  getA obj # === 1
+  ```
+
 * Chained calls
   ```livescript
   [1, 2, 3]
-    |> map (a) -> a + 2
-    |> map (a) -> a * 2
+    |> map (+ 2)
+    |> filter (> 2)
   ```
 
 * Objects
@@ -306,14 +316,12 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   ```
 
 TODO:
+  * Expression as assignable (if, while, ...)
+  * 'it'
   * implements
-  * Options for compiler
-  * Transpile code in template strings
-  * Better scoped variables (bug in 'let')
-  * Better error system (more details, more accuracy)
-  * Class types for methods and properties
   * Class visibility (public, private,...)
   * class static
+  * Class types for methods and properties
   * cast
   * Generics
   * readonly for interface
@@ -321,8 +329,10 @@ TODO:
   * index for interface
   * func type for interface
   * abstract
-  * function shorthand (+2)
-  * Better multiline chaining of ComputedProperty
+  * Options for compiler
+  * Transpile code in template strings
+  * Better scoped variables (bug in 'let')
+  * Better error system (more details, more accuracy)
   * Std lib
   * Split grammar
   * Multiline string
@@ -347,4 +357,6 @@ TODO:
     - Curry
     - Not
     - ChainedCall
+    - It
+    - Function shorthand
   * (Plugin system ?)

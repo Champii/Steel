@@ -74,5 +74,6 @@ visit = (nodes) ->
     node
 
 module.exports = (ast) ->
+  # console.log util.inspect ast, depth: null
   ast.children = visit ast.children
   ast
