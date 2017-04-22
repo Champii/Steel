@@ -39,7 +39,7 @@ describe('Objects', () => {
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo = {a: 1, b: 2, c: {d: 2, e: {a: 1}, f: function () {\n  return 1;\n}}};\n`);
+          expect(res).to.eq(`let foo = {a: 1, b: 2, c: {d: 2, e: {a: 1}, f: function (it) {\n  return 1;\n}}};\n`);
         })
       ;
     });
@@ -54,7 +54,7 @@ describe('Objects', () => {
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo = {a: 1, b: 'a', c: function () {\n  return 1;\n}};\n`);
+          expect(res).to.eq(`let foo = {a: 1, b: 'a', c: function (it) {\n  return 1;\n}};\n`);
         })
       ;
     });
@@ -73,7 +73,7 @@ describe('Objects', () => {
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo = {a: 1, b: 2, c: {d: 2, e: {a: 1}, f: function () {\n  return 1;\n}, g: {a: a}}};\n`);
+          expect(res).to.eq(`let foo = {a: 1, b: 2, c: {d: 2, e: {a: 1}, f: function (it) {\n  return 1;\n}, g: {a: a}}};\n`);
         })
       ;
     });
@@ -239,7 +239,7 @@ describe('Objects', () => {
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`a.b.c(1).e(function () {
+          expect(res).to.eq(`a.b.c(1).e(function (it) {
   return 1;
 });
 `);

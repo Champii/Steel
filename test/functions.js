@@ -19,7 +19,7 @@ describe('Functions', () => {
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = function () {
+            expect(res).to.eq(`let foo = function (it) {
   return 1;
 };
 `);
@@ -33,7 +33,7 @@ describe('Functions', () => {
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = function () {
+            expect(res).to.eq(`let foo = function (it) {
   1;
 };
 `);
@@ -99,7 +99,7 @@ foo()`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = function () {
+              expect(res).to.eq(`let foo = function (it) {
   return 1;
 };
 foo();
@@ -187,7 +187,7 @@ foo!`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = function () {
+              expect(res).to.eq(`let foo = function (it) {
   return 1;
 };
 foo();
@@ -212,7 +212,7 @@ foo();
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = () => {
+            expect(res).to.eq(`let foo = (it) => {
   return 1;
 };
 `);
@@ -226,7 +226,7 @@ foo();
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = () => {
+            expect(res).to.eq(`let foo = (it) => {
   1;
 };
 `);
@@ -292,7 +292,7 @@ foo()`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = () => {
+              expect(res).to.eq(`let foo = (it) => {
   return 1;
 };
 foo();
@@ -380,7 +380,7 @@ foo!`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = () => {
+              expect(res).to.eq(`let foo = (it) => {
   return 1;
 };
 foo();

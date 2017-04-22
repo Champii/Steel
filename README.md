@@ -208,6 +208,12 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   add5 5 # === 10
   ```
 
+* Auto add argument 'it' when only one
+  ```livescript
+  a = -> it + 2
+  a 2 # === 4
+  ```
+
 * Shorthand function declaration
   ```livescript
   add2 = (+ 2)
@@ -316,8 +322,9 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   ```
 
 TODO:
+  * Return in each final branch
+  * Exports
   * Expression as assignable (if, while, ...)
-  * 'it'
   * implements
   * Class visibility (public, private,...)
   * class static
@@ -357,6 +364,5 @@ TODO:
     - Curry
     - Not
     - ChainedCall
-    - It
     - Function shorthand
   * (Plugin system ?)
