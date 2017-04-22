@@ -176,6 +176,14 @@ let dog: Dog = new Dog();
     foo!
     ```
 
+* Curry operator
+  ```livescript
+  # Exists for arrow function : '~~>'
+  add = (a, b) --> a + b
+  add5 = add 5
+  add5 5 # === 10
+  ```
+
 * Objects
   ```livescript
   obj1 = {}
@@ -267,11 +275,11 @@ let dog: Dog = new Dog();
   ```
 
 TODO:
+  * implements
   * Options for compiler
   * Transpile code in template strings
   * Better scoped variables (bug in 'let')
   * Better error system (more details, more accuracy)
-  * implements
   * Class types for methods and properties
   * Class visibility (public, private,...)
   * class static
@@ -282,11 +290,12 @@ TODO:
   * index for interface
   * func type for interface
   * abstract
-  * Curry operator (--> and ~~>)
   * method chaining |>
   * function shorthand (+2)
   * Better multiline chaining of ComputedProperty
   * curry operator --> and ~~>
+  * Std lib
+  * Split grammar
   * Add tests for
     - If
     - Else

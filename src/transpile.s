@@ -6,6 +6,7 @@ path    = require 'path'
 tokens: any = {}
 variables   = [[]]
 types       = {}
+hasCurry    = false
 
 currentBlockIndent = 0
 
@@ -190,6 +191,20 @@ tokens.ArrowFunction = (node) ->
   [args, res] = functionManage(node)
 
   `${args} => ${res.join('')}`
+
+tokens.FunctionExpressionCurry = (node) ->
+  hasCurry = true
+
+  [args, res] = functionManage(node)
+
+  `curry$(function ${args} ${res.join('')})`
+
+tokens.ArrowFunctionCurry = (node) ->
+  hasCurry = true
+
+  [args, res] = functionManage(node)
+
+  `curry$(${args} => ${res.join('')})`
 
 tokens.FunctionCall = (node) ->
   res = transpile(node.children)
@@ -526,6 +541,13 @@ tokens.ImportLine = (node) ->
   else if forcedVersion is 'native'
     return importNativeEs5 node
 
+curryFunction = `function curry$(f, bound?){ var context, _curry = function(args?){ return f.length > 1 ? function(){ var params = args ? args.concat() :[]; context = bound ? context || this : this; return params.push.apply(params, arguments) < f.length && arguments.length ? _curry.call(context, params) : f.apply(context, params); } : f; }; return _curry(); }`
+
+addCurryDeclaration = (res) ->
+  if hasCurry
+    return res + curryFunction
+
+  res
 
 transpile = (nodes) ->
   if !nodes.length
@@ -544,7 +566,9 @@ transpile = (nodes) ->
 _transpile = (ast) ->
   variables = [[]]
   types = {}
+  hasCurry = false
 
-  transpile(ast.children).join('')
+  addCurryDeclaration transpile(ast.children).join('')
+
 
 module.exports = _transpile

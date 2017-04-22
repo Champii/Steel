@@ -26,7 +26,7 @@ exports.transpile = (input, file) ->
   ast            = generateAst file, preprocessed
   transformedAst = transformAst ast
   transpiled     = transpile transformedAst
-  # console.log transpiled
+  console.log transpiled
   compileFunc    = compile file
   compiled       = compileFunc transpiled
 
