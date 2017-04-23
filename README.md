@@ -323,6 +323,7 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
 
 TODO:
   * Return in each final branch
+  * typeof, delete, instanceof, ...
   * Exports
   * Expression as assignable (if, while, ...)
   * implements
@@ -341,7 +342,6 @@ TODO:
   * Better scoped variables (bug in 'let')
   * Better error system (more details, more accuracy)
   * Std lib
-  * Split grammar
   * Multiline string
   * Add tests for
     - If

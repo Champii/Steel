@@ -4,10 +4,19 @@ util       = require 'util'
 path       = require 'path'
 pegjs      = require 'pegjs'
 
-grammar    = fs.readFileSync(path.resolve(__dirname, './light.pegjs')).toString()
+grammar    = ''
 
-parser     = pegjs.generate grammar, cache: true
 whitespace = ' '
+
+loadGrammar = ->
+  main    = fs.readFileSync path.resolve(__dirname, '../gram/steel.pegjs') .toString!
+  folder  = fs.readdirSync path.resolve(__dirname, '../gram/elems')
+  files   = folder.map (file) -> fs.readFileSync(path.resolve(__dirname, `../gram/elems/${file}`)).toString! + '\n'
+  grammar = _.reduce files, (acc, item) -> `${acc}${item}`, main
+
+loadGrammar!
+
+parser = pegjs.generate grammar, cache: true
 
 transpile = (filename, input) ->
   try

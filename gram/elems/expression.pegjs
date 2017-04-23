@@ -1,0 +1,15 @@
+Expression "Expression"
+  = Assignation
+  / Class
+  / Interface
+  / Import
+  / Operation
+  / BooleanExpr
+  / Return
+  / If
+  / Try
+  / Throw
+  / While
+  / For
+  / TypeAssignation
+  / Assignable
