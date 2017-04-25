@@ -11,13 +11,24 @@ describe('Classes', () => {
 
   describe('without types', () => {
 
+    it('should produce an empty class', () => {
+      const string = `class A`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`class A {};\n`);
+        })
+      ;
+    });
+
     it('should produce a good class output', () => {
       const string = `class A
   a: 1
   constructor: -> 1
   b: (a, b) ->
     2
-`;
+inst = new A`;
       const promise = lightscript._transpileStringToTs(string);
 
       return expect(promise).to.be.fulfilled
@@ -31,6 +42,7 @@ describe('Classes', () => {
     return 2;
   }
 };
+let inst = new A;
 `);
         })
       ;

@@ -306,12 +306,12 @@ tokens.ElseIf = (node) ->
 
   condition = res.shift()
 
-  `else if (${condition}) ${res.join('')}\n`
+  ` else if (${condition}) ${res.join('')}`
 
 tokens.Else = (node) ->
   res = transpile(node.children)
 
-  ` else ${res.join('')}\n`
+  ` else ${res.join('')}`
 
 tokens.Try = (node) ->
   res = transpile(node.children)
@@ -324,7 +324,7 @@ tokens.Catch = (node) ->
   if res.length is 2
     cond = res.shift()
 
-  `catch (${cond})${res.join('')}\n`
+  ` catch (${cond}) ${res.join('')}`
 
 tokens.While = (node) ->
   res = transpile(node.children)

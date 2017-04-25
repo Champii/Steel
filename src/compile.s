@@ -30,6 +30,7 @@ reporter = ->
     error: (err) -> errs.push err.message
     finish: (results) ->
       if results.emitSkipped
+        # Hard fix for when gulp-typescript outputs errors twice
         size = errs.length
         errs.splice size / 2, size / 2
 

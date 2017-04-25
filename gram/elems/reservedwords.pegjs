@@ -9,6 +9,7 @@ ReservedWords
       / "if"
       / "else"
       / "not"
+      / "return"
       )
       " "
     )

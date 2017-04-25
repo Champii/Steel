@@ -54,41 +54,43 @@ dog: Dog = new Dog
 Transpile into
 
 ```typescript
-const foo: (a: number, b: number) => number = function (a, b) {
-  return a + b;
-};
+(function () {
+  const foo: (a: number, b: number) => number = function (a, b) {
+    return a + b;
+  };
 
-const bar = (c: number, d: number): number => {
-  if ((c != null) && (d != null)) {
-    return c + d;
-  } else {
-    return 0;
+  const bar = (c: number, d: number): number => {
+    if ((c != null) && (d != null)) {
+      return c + d;
+    } else {
+      return 0;
+    }
+  };
+
+  filter((function (it?) {
+    return it > 2;
+  }), map((function (it?) {
+    return it + 2;
+  }), [1, 2, 3]));
+
+  const nonReturning = function () {
+    1;
+  };
+
+  class Animal {
+    a = 1
+    b() {
+      return 1;
+    }
+    constructor(val:number) {
+      this.a = val;
+    }
   }
-};
 
-filter((function (it?) {
-  return it > 2;
-}), map((function (it?) {
-  return it + 2;
-}), [1, 2, 3]));
+  class Dog extends Animal {};
 
-const nonReturning = function () {
-  1;
-};
-
-class Animal {
-  a = 1
-  b() {
-    return 1;
-  }
-  constructor(val:number) {
-    this.a = val;
-  }
-}
-
-class Dog extends Animal {};
-
-let dog: Dog = new Dog();
+  let dog: Dog = new Dog();
+})();
 ```
 
 ## Install
@@ -123,9 +125,7 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   sc -c folder/**/*.s
   ```
 
-  The format of the path is the same as for gulp. If you want to compile recursively or exclude some folders.
-
-  If a folder is given, every files inside will be recursively compiled and will stay at their original path. See `-o` option below to set a different output directory.
+  The format of the path is the same as for gulp. If you want to compile recursively or exclude some folders for exemple.
 
 ### Compile to a diferent output
   ```bash
@@ -356,25 +356,16 @@ TODO:
   * Multiline string
   * Better error management for on-the-fly compilation (get rid of typescript-simple)
   * Add tests for
-    - If
-    - Else
-    - For
-    - While
     - Not
-    - Class
-    - Interface
-    - New
     - Import
-    - Try/Catch
     - TestOps
     - Unary
     - Operation
-    - Return
     - Throw
     - Existance
     - Inheritance
     - Curry
-    - Not
     - ChainedCall
     - Function shorthand
+  * Support tsconfig.json
   * (Plugin system ?)

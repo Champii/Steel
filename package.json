@@ -1,10 +1,11 @@
 {
   "name": "steel-lang",
   "version": "0.0.10",
-  "description": "",
+  "description": "Strongly Typed Experimental Expressive Language",
   "main": "index.js",
-  "author": "",
+  "author": "Champii",
   "license": "ISC",
+  "repository": "Champii/Steel",
   "dependencies": {
     "@types/lodash": "^4.14.62",
     "bluebird": "^3.5.0",
