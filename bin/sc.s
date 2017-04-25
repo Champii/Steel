@@ -5,8 +5,11 @@ path        = require 'path'
 gulp        = require 'gulp'
 steel       = require '..'
 
+pack        = path.resolve __dirname, '../package.json'
+version     = require(pack).version
+
 argv
-  .version '0.0.9'
+  .version(version)
   .usage '[options] <files ...>'
   .option '-c, --compile', 'Compile files'
   .option '-p, --print', 'Print files'
@@ -17,6 +20,9 @@ argv
 
 paths = argv.args
 compilePath = '.'
+
+if not paths.length
+  process.exit!
 
 if argv.compile
   if argv.output
