@@ -24,7 +24,7 @@ describe('Classes', () => {
         .then(res => {
           expect(res).to.eq(`class A {
   a = 1;
-  constructor(it) {
+  constructor(it?) {
     1;
   }
   b(a, b) {

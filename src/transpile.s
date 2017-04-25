@@ -569,12 +569,14 @@ transpile = (nodes) ->
 
     transpile(node.children).join('')
 
-_transpile = (ast) ->
+_transpile = (pair) ->
+  ast = pair.1
   variables = [[]]
   types = {}
   hasCurry = false
 
-  addCurryDeclaration transpile(ast.children).join('')
+  pair.1 = addCurryDeclaration transpile(ast.children).join('')
+  pair
 
 
 module.exports = _transpile

@@ -343,6 +343,7 @@ TODO:
   * Better error system (more details, more accuracy)
   * Std lib
   * Multiline string
+  * Better compilation (all in once for typescript compilation)
   * Add tests for
     - If
     - Else

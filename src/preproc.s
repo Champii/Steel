@@ -16,7 +16,7 @@ countTabs = (it) ->
 
 indent = '  '
 
-module.exports = (input) ->
+preprocessor = (input) ->
   instrOrig = input
     .toString!
     .split('\n')
@@ -43,3 +43,9 @@ module.exports = (input) ->
     i++
 
   instrOrig.join '\n'
+
+_ = require 'lodash'
+
+module.exports = (pair) ->
+  pair.1 = preprocessor pair.1
+  pair

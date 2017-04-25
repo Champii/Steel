@@ -73,7 +73,9 @@ visit = (nodes) ->
     node.children = visit node.children
     node
 
-module.exports = (ast) ->
+module.exports = (pair) ->
+  ast = pair.1
   # console.log util.inspect ast, depth: null
   ast.children = visit ast.children
-  ast
+  pair.1 = ast
+  pair

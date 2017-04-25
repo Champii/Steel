@@ -19,7 +19,7 @@
     }
 
     if (args === null) {
-      const argId = createNode('Identifier', [], 'it');
+      const argId = createNode('Identifier', [], 'it?');
       args = createNode('FunctionArguments', [argId]);
     }
 

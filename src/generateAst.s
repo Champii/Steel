@@ -18,15 +18,16 @@ loadGrammar!
 
 parser = pegjs.generate grammar, cache: true
 
-transpile = (filename, input) ->
+transpile = (pair) ->
   try
-    return parser.parse input
+    pair.1 = parser.parse pair.1
+    return pair
   catch e
     if e.location != null
       locationLength = e.location.end.offset - e.location.start.offset
-      location = input.substr(_.max([e.location.start.offset - 10, 0]), _.min([locationLength + 20, input.length]))
+      location = pair.1.substr(_.max([e.location.start.offset - 10, 0]), _.min([locationLength + 20, pair.1.length]))
 
-      console.log `${filename}: ${e.name}: Line ${e.location.start.line} / Col ${e.location.start.column}`
+      console.log `${pair[0]}: ${e.name}: Line ${e.location.start.line} / Col ${e.location.start.column}`
       console.log location
       console.log `${whitespace.repeat(e.location.start.offset - _.max([e.location.start.offset - 10, 0]))}^`
 

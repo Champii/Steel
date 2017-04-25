@@ -1,3 +1,4 @@
+_            = require 'lodash'
 fs           = require 'fs'
 ts           = require 'typescript'
 tiny         = require 'tiny-parser'
@@ -5,6 +6,10 @@ hook         = require 'node-hook'
 util         = require 'util'
 path         = require 'path'
 bluebird     = require 'bluebird'
+Vinyl        = require 'vinyl'
+PassThrough  = require 'stream' .PassThrough
+Module       = require 'module'
+
 
 preproc      = require './preproc'
 generateAst  = require './generateAst'
@@ -14,30 +19,36 @@ compile      = require './compile'
 
 fs = bluebird.promisifyAll fs
 
-exports.transpileFiles = (files) -> bluebird.mapSeries files, exports.transpileFile
+exports.transpileStream = (stream) ->
+  stream.on 'data', exports.transpile
+  compile stream
 
-exports.transpileFile = (file) ->
-  fs
-  .readFileAsync(file)
-  .then((input) -> exports.transpile input, file)
 
-exports.transpile = (input, file) ->
-  preprocessed   = preproc input
-  ast            = generateAst file, preprocessed
+exports.transpile = (file) ->
+  pair = [path.basename(file.path), file.contents]
+
+  preprocessed   = preproc pair
+  ast            = generateAst preprocessed
   transformedAst = transformAst ast
   transpiled     = transpile transformedAst
-  # console.log transpiled
-  compileFunc    = compile file
-  compiled       = compileFunc transpiled
 
-  compiled
+  file.contents = new Buffer transpiled.1
+  file.path = path.resolve(path.dirname(file.path), path.basename(file.path, '.s') + '.ts')
+
+  file
 
 exports._transpileStringToTs = (input) ->
-  preprocessed   = preproc input
-  ast            = generateAst '', preprocessed
+  pair = ['', input]
+  preprocessed   = preproc pair
+  ast            = generateAst preprocessed
   transformedAst = transformAst ast
   transpiled     = transpile transformedAst
 
-  Promise.resolve transpiled
+  Promise.resolve transpiled.1
 
-hook.hook '.s', (input, file) -> exports.transpile input, file .output
+
+hook.hook '.s', (input, file) ->
+  trans = exports.transpile new Vinyl  path: file, contents: new Buffer input
+  compile.file trans
+
+
