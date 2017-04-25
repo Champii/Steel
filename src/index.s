@@ -23,7 +23,6 @@ exports.transpileStream = (stream) ->
   stream.on 'data', exports.transpile
   compile stream
 
-
 exports.transpile = (file) ->
   pair = [path.basename(file.path), file.contents]
 
@@ -46,9 +45,6 @@ exports._transpileStringToTs = (input) ->
 
   Promise.resolve transpiled.1
 
-
 hook.hook '.s', (input, file) ->
   trans = exports.transpile new Vinyl  path: file, contents: new Buffer input
   compile.file trans
-
-

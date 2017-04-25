@@ -66,9 +66,9 @@ const bar = (c: number, d: number): number => {
   }
 };
 
-filter((function (it) {
+filter((function (it?) {
   return it > 2;
-}), map((function (it) {
+}), map((function (it?) {
   return it + 2;
 }), [1, 2, 3]));
 
@@ -105,20 +105,32 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   sc file.s
   ```
 
-  Files extensions are `.s`. This extension is registered inside NodeJS when loading `steel-lang` to auto-compile steel files on the fly when required.
+  You can only compile and execute single file on the fly
+
+  Files extensions are `.s`.
+  This extension is registered inside NodeJS when loading `steel-lang` to auto-compile steel files on the fly when required.
+
+  This means you can write
+  ```javascript
+  require('steel-lang');
+  obj = require('./someFile.s');
+  ```
 
 ### Compile a file/folder
   ```bash
   sc -c file1.s file2.s
-  sc -c folder
+  sc -c folder/*.s
+  sc -c folder/**/*.s
   ```
+
+  The format of the path is the same as for gulp. If you want to compile recursively or exclude some folders.
 
   If a folder is given, every files inside will be recursively compiled and will stay at their original path. See `-o` option below to set a different output directory.
 
 ### Compile to a diferent output
   ```bash
   sc -o dir -c file1.s file2.s
-  sc -o dir -c folder
+  sc -o dir -c folder/*.s
   ```
 
   Will output compiled files into `dir` folder.
@@ -126,7 +138,6 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   If the folder doesnt exists, it is created on the fly.
 
   The arborescence is recreated if a folder is recursively compiled.
-
 
 ## Features
 
@@ -343,7 +354,7 @@ TODO:
   * Better error system (more details, more accuracy)
   * Std lib
   * Multiline string
-  * Better compilation (all in once for typescript compilation)
+  * Better error management for on-the-fly compilation (get rid of typescript-simple)
   * Add tests for
     - If
     - Else

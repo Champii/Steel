@@ -576,6 +576,7 @@ _transpile = (pair) ->
   hasCurry = false
 
   pair.1 = addCurryDeclaration transpile(ast.children).join('')
+  pair.1 = `(function () {\n${pair[1]}})();`
   pair
 
 
