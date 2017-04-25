@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 (function () {
     let _ = require('lodash');
     let fs = require('fs.extra');

@@ -32,6 +32,8 @@
     "sc": "./bin/sc.js"
   },
   "scripts": {
-    "test": "mocha test"
+    "test": "npm run rebuild; mocha test",
+    "build": "sc -o lib -c src/**.s; sc -o bin -c bin/sc.s",
+    "rebuild": "npm run build; node bin/sc.js -o lib -c src/**.s"
   }
 }
