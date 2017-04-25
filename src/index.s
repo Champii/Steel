@@ -31,6 +31,8 @@ exports.transpile = (file) ->
   transformedAst = transformAst ast
   transpiled     = transpile transformedAst
 
+  transpiled.1 = `(function () {\n${transpiled[1]}})();`
+
   file.contents = new Buffer transpiled.1
   file.path = path.resolve(path.dirname(file.path), path.basename(file.path, '.s') + '.ts')
 

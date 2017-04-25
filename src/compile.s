@@ -39,7 +39,6 @@ reporter = ->
 module.exports = (stream) ->
   stream.pipe gts compilerOptions, reporter!
 
-
 module.exports.file = (file) ->
   try
     return tss.compile file.contents.toString!
