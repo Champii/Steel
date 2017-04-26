@@ -399,7 +399,8 @@ tokens.Class = (node) ->
   if node.children[node.children.length - 1].symbol is 'Extends'
     res.splice 1, 0, res.pop!
 
-  if node.children[node.children.length - 1].symbol isnt 'ClassBlock'
+  hasBlock = _.map node.children, 'symbol' .includes 'ClassBlock'
+  if !hasBlock
     res.push '{}'
 
   `class ${res.join(' ')}`
@@ -511,6 +512,16 @@ importNativeEs5 = (node) ->
 
   return `import ${transpile(fromId.children).join('')} from '${id}';\n`
 
+getStringBaseName = (lit) ->
+  val = lit
+  if val.0 is '.' and val.1 is '/'
+    val = path.basename val, path.extname val
+  val
+
+stringImport = (lit) ->
+  val = getStringBaseName lit
+  return `import ${val} = require('${lit}');\n`
+
 importCommonJs = (node) ->
   id = node.children[0].literal
 
@@ -518,10 +529,7 @@ importCommonJs = (node) ->
     id = id.substr 1, id.length - 2
 
   if node.children.length is 1 and node.children[0].symbol is 'String'
-    val = id
-    if val.0 is '.' and val.1 is '/'
-      val = path.basename val
-    return `import ${val} = require('${id}');\n`
+    return stringImport id
 
   if node.children.length is 1
     return `import ${id} = require('${id}');\n`
@@ -533,8 +541,16 @@ importCommonJs = (node) ->
 
   if fromId.children[0].symbol is 'ObjectDestruct'
     destruct = transpile(fromId.children).join('')
-    res = `import _${id} = require('${id}');\n`
-    res += `let ${destruct} = _${id};\n`
+    res = ''
+    tmpId = id
+
+    if node.children[0].symbol is 'String'
+      tmpId = getStringBaseName tmpId
+      res = `import _${tmpId} = require('${id}');\n`
+    else
+      res = `import _${id} = require('${id}');\n`
+
+    res += `let ${destruct} = _${tmpId};\n`
     return res
 
   return `import ${transpile(fromId.children).join('')} = require('${id}');\n`

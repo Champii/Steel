@@ -223,4 +223,20 @@ catch e
 
   });
 
+  describe('Not', () => {
+
+    it('should produce a not', () => {
+      const string = `a = not b`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`let a = !b;
+`);
+        })
+      ;
+    });
+
+  });
+
 });

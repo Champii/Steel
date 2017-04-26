@@ -26,14 +26,19 @@
     "@types/node": "^7.0.12",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
+    "coveralls": "^2.13.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0"
   },
   "bin": {
     "sc": "./bin/sc.js"
   },
   "scripts": {
-    "test": "npm run rebuild; mocha test",
-    "build": "sc -o lib -c src/**.s; sc -o bin -c bin/sc.s",
-    "rebuild": "npm run build; node bin/sc.js -o lib -c src/**.s"
+    "test": "npm run bootstrap && npm run mocha",
+    "mocha": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test",
+    "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "build": "sc -o lib -c src/**.s && sc -o bin -c bin/sc.s",
+    "build-local": "node bin/sc.js -o lib -c src/**.s && node bin/sc.js -o bin -c bin/sc.s",
+    "bootstrap": "npm run build && npm run build-local"
   }
 }

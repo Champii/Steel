@@ -1,6 +1,8 @@
 # Steel
 ### Strongly Typed Experimental Expressive Language
 
+[![Coverage Status](https://coveralls.io/repos/github/Champii/Steel/badge.svg?branch=master)](https://coveralls.io/github/Champii/Steel?branch=master)
+
 Language that transpile to TypeScript and JavaScript.
 
 Steel is a bootstraped language. That means the code itself is developed in Steel.
@@ -355,17 +357,21 @@ TODO:
   * Std lib
   * Multiline string
   * Better error management for on-the-fly compilation (get rid of typescript-simple)
+  * Import native (through options)
   * Add tests for
-    - Not
-    - Import
+    - Array
+    - Object/Array destruct
     - TestOps
     - Unary
     - Operation
     - Throw
     - Existance
-    - Inheritance
     - Curry
     - ChainedCall
     - Function shorthand
+    - Multiline computed property
+    - This computed property (direct)
+    - Import native
+    - Full compile
   * Support tsconfig.json
   * (Plugin system ?)
