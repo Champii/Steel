@@ -30,7 +30,7 @@ preprocessor = (input) ->
     line = instrOrig[i]
     newTabCount = countTabs line
 
-    if tabCount < newTabCount && instrOrig[i].trim()[0] isnt '.'&& instrOrig[i].trim().substr(0, 2) isnt '|>'
+    if tabCount < newTabCount && instrOrig[i].trim().substr(0, 2) isnt '|>'
       instrOrig[i - 1] = instrOrig[i - 1] + '@{'
       tabCount = newTabCount
     else if tabCount > newTabCount

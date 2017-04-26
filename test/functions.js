@@ -281,6 +281,7 @@ foo();
 
     });
 
+
     describe('Call', () => {
 
       describe('Parenthesis', () => {
@@ -390,6 +391,46 @@ foo();
         });
 
       });
+
+    });
+
+  });
+
+  describe('Curry', () => {
+
+    const curryFunc = `function curry$(f, bound?){ var context, _curry = function(args?){ return f.length > 1 ? function(){ var params = args ? args.concat() :[]; context = bound ? context || this : this; return params.push.apply(params, arguments) < f.length && arguments.length ? _curry.call(context, params) : f.apply(context, params); } : f; }; return _curry(); }`;
+
+    describe('Declaration', () => {
+
+        it('should produce a currified function', () => {
+          const string = `foo = (a, b) --> 1
+`;
+          const promise = lightscript._transpileStringToTs(string);
+
+          return expect(promise).to.be.fulfilled
+            .then(res => {
+              expect(res).to.eq(`let foo = curry$(function (a, b) {
+  return 1;
+});
+${curryFunc}`);
+            })
+          ;
+        });
+
+        it('should produce a currified arrow function', () => {
+          const string = `foo = (a, b) ~~> 1
+`;
+          const promise = lightscript._transpileStringToTs(string);
+
+          return expect(promise).to.be.fulfilled
+            .then(res => {
+              expect(res).to.eq(`let foo = curry$((a, b) => {
+  return 1;
+});
+${curryFunc}`);
+            })
+          ;
+        });
 
     });
 

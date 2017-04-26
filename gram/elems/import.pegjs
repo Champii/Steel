@@ -12,7 +12,7 @@ ImportBlock
 ImportLine
   = ws
     body:(
-      String
+      StringLiteral
     / Identifier
     )
     from:ImportFrom?

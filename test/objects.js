@@ -97,6 +97,21 @@ describe('Objects', () => {
 
   describe('Usage', () => {
 
+    it('should have a destruct object', () => {
+      const string = `{ a, b } = c`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`let {a, b} = c;\n`);
+        })
+      ;
+    });
+
+  });
+
+  describe('Usage', () => {
+
     it('should have a computed variable property', () => {
       const string = `a.a`;
       const promise = lightscript._transpileStringToTs(string);
@@ -234,6 +249,8 @@ describe('Objects', () => {
   .b
   .c 1
   .e -> 1
+  .d 'a', b
+  .f g h
 `;
       const promise = lightscript._transpileStringToTs(string);
 
@@ -241,8 +258,19 @@ describe('Objects', () => {
         .then(res => {
           expect(res).to.eq(`a.b.c(1).e(function (it?) {
   return 1;
-});
+}).d('a', b).f(g(h)));
 `);
+        })
+      ;
+    });
+
+    it('should have this properly handled', () => {
+      const string = `@toto.foo`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`this.toto.foo;\n`);
         })
       ;
     });

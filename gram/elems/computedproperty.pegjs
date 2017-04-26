@@ -13,8 +13,8 @@ ComputedPropertyDirect
 ComputedPropertyIndirect
   = id:(
       Literal
-    / FunctionCall
     / This
+    / FunctionCall
     / Identifier
     / Array
     / Object
@@ -23,12 +23,11 @@ ComputedPropertyIndirect
   { return createNode('ComputedPropertyIndirect', _.compact([id, ...prop])); }
 
 PossibleComputedProperties
-  = LineSpace?
-    prop:(
+  = prop:(
       ComputedPropertiesDots
     / ComputedPropertiesBraces
     )
-    call:Call? ws
+    call:Call?
   { return createNode('PossibleComputedProperties', _.compact([prop, call])); }
 
 ComputedPropertiesBraces
@@ -40,6 +39,10 @@ ComputedPropertiesBraces
   }
 
 ComputedPropertiesDots
+  = ComputedPropertiesDotsBlock
+  / ComputedPropertiesDotsInline
+
+ComputedPropertiesDotsInline
   = Dot
     prop:(
       NumericComputedProperty
@@ -47,13 +50,19 @@ ComputedPropertiesDots
     )
   { return createNode('ComputedPropertiesDots', _.compact([prop])); }
 
+ComputedPropertiesDotsBlock
+  = "@{\n" ws
+    prop:ComputedPropertiesDotsInline
+    "\n@}"
+  { return prop; }
+
 ComputedPropertiesTypes
   = Literal
-  / ComputedProperty
   / FunctionCall
+  / ComputedPropertyIndirect
   / Operation
   / Identifier
 
 NumericComputedProperty
-  = Number
+  = NumericLiteral
   { return createNode('NumericComputedProperty', [], text()); }

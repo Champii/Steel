@@ -525,10 +525,10 @@ stringImport = (lit) ->
 importCommonJs = (node) ->
   id = node.children[0].literal
 
-  if node.children[0].symbol is 'String'
+  if node.children[0].symbol is 'StringLiteral'
     id = id.substr 1, id.length - 2
 
-  if node.children.length is 1 and node.children[0].symbol is 'String'
+  if node.children.length is 1 and node.children[0].symbol is 'StringLiteral'
     return stringImport id
 
   if node.children.length is 1
@@ -544,7 +544,7 @@ importCommonJs = (node) ->
     res = ''
     tmpId = id
 
-    if node.children[0].symbol is 'String'
+    if node.children[0].symbol is 'StringLiteral'
       tmpId = getStringBaseName tmpId
       res = `import _${tmpId} = require('${id}');\n`
     else

@@ -13,3 +13,19 @@ ReservedWords
       )
       " "
     )
+
+ReservedWord
+  = Keyword
+  / FutureReservedWord
+  / NullLiteral
+  / BooleanLiteral
+
+FutureReservedWord
+  = ClassToken
+  / ConstToken
+  / EnumToken
+  / ExportToken
+  / ExtendsToken
+  / ImportToken
+  / SuperToken
+

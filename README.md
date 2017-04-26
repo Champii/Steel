@@ -360,19 +360,12 @@ TODO:
   * Better error management for on-the-fly compilation (get rid of typescript-simple)
   * Import native (through options)
   * Add tests for
-    - Array
-    - Object/Array destruct
-    - TestOps
-    - Unary
     - Operation
-    - Throw
     - Existance
-    - Curry
     - ChainedCall
     - Function shorthand
-    - Multiline computed property
-    - This computed property (direct)
     - Import native
     - Full compile
+    - Comments
   * Support tsconfig.json
   * (Plugin system ?)

@@ -12,7 +12,7 @@ Dot             = "." ws
 AssignationOp   = ws "=" ws
 Colon           = ws ":" ws
 EmptyStatement  = ""
-This            = "@"
+This            = "@" { return createNode('Identifier', [], 'this')}
 LineSpace       = ws EndOfLine ws
 EndOfLine       = "\n"
 ws              = " "* { return null }

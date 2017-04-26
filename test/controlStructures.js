@@ -239,4 +239,68 @@ catch e
 
   });
 
+  describe('Throw', () => {
+
+    it('should produce a throw', () => {
+      const string = `throw test!`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`throw test();\n`);
+        })
+      ;
+    });
+
+  });
+
+  describe('Tests operators', () => {
+
+    it('should produce a and', () => {
+      const string = `a and b`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`a && b;\n`);
+        })
+      ;
+    });
+
+    it('should produce a is', () => {
+      const string = `a is b`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`a === b;\n`);
+        })
+      ;
+    });
+
+
+    it('should produce a isnt', () => {
+      const string = `a isnt b`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`a !== b;\n`);
+        })
+      ;
+    });
+
+    it('should produce a complexe one', () => {
+      const string = `a.b(a) is b and b isnt a or c!`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`a.b(a) === b && b !== a || c();\n`);
+        })
+      ;
+    });
+
+  });
+
 });

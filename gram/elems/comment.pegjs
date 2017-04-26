@@ -1,3 +1,3 @@
 Comment
-  = ws "#" ws chars:(Char / "'")*
+  = ws "#" ws chars:(SourceCharacter / "'")*
   { return createNode('Comment', [], chars.join('')); }

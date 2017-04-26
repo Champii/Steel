@@ -23,12 +23,12 @@ describe('Types', () => {
     });
 
     it('should declare a typed func', () => {
-      const string = `foo = (a: number, b: string) -> a`;
+      const string = `foo = (a: number, b: string): number -> a`;
       const promise = lightscript._transpileStringToTs(string);
 
       return expect(promise).to.be.fulfilled
         .then(res => {
-          expect(res).to.eq(`let foo = function (a:number, b:string) {
+          expect(res).to.eq(`let foo = function (a:number, b:string): number {
   return a;
 };
 `);

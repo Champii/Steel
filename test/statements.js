@@ -27,7 +27,6 @@ let bar = function (it?) {
   });
 
   it('should not have semi-column on structures of control', () => {
-    // @todo: check why is there a need of a terminating \n
     const string = `if a is b
   a
 else
@@ -45,6 +44,16 @@ else
 `);
       })
     ;
+  });
+
+  it('should fail', () => {
+    const string = `a = 2a`;
+    const promise = Promise
+      .resolve()
+      .then(() => lightscript._transpileStringToTs(string))
+    ;
+
+    return expect(promise).to.be.rejected;
   });
 
 });

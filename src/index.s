@@ -17,6 +17,8 @@ transformAst = require './transformAst'
 transpile    = require './transpile'
 compile      = require './compile'
 
+inspect = -> console.log util.inspect it, depth: null
+
 fs = bluebird.promisifyAll fs
 
 exports.transpileStream = (stream) ->
@@ -28,10 +30,15 @@ exports.transpile = (file) ->
 
   preprocessed   = preproc pair
   ast            = generateAst preprocessed
+
+  inspect ast
+
   transformedAst = transformAst ast
   transpiled     = transpile transformedAst
 
-  transpiled.1 = `(function () {\n${transpiled[1]}})();`
+  console.log transpiled.1
+
+  transpiled.1 = `(function () {${transpiled[1]}})();`
 
   file.contents = new Buffer transpiled.1
   file.path = path.resolve(path.dirname(file.path), path.basename(file.path, '.s') + '.ts')
