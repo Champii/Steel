@@ -1,6 +1,7 @@
 # Steel
 ### Strongly Typed Experimental Expressive Language
 
+[![Build Status](https://travis-ci.org/Champii/Steel.svg?branch=master)](https://travis-ci.org/Champii/Steel)
 [![Coverage Status](https://coveralls.io/repos/github/Champii/Steel/badge.svg?branch=master)](https://coveralls.io/github/Champii/Steel?branch=master)
 
 Language that transpile to TypeScript and JavaScript.
