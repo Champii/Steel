@@ -34,8 +34,7 @@
     "sc": "./bin/sc.js"
   },
   "scripts": {
-    "test": "npm run bootstrap && npm run mocha",
-    "mocha": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test",
+    "test": "npm run build-local && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test",
     "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "build": "sc -o lib -c src/**.s && sc -o bin -c bin/sc.s",
     "build-local": "node bin/sc.js -o lib -c src/**.s && node bin/sc.js -o bin -c bin/sc.s",
