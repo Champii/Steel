@@ -357,6 +357,7 @@ TODO:
   * Better error system (more details, more accuracy)
   * Std lib
   * Multiline string
+  * Shebang
   * Better error management for on-the-fly compilation (get rid of typescript-simple)
   * Import native (through options)
   * Add tests for

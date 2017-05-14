@@ -585,14 +585,31 @@ transpile = (nodes) ->
 
     transpile(node.children).join('')
 
-_transpile = (pair) ->
+extractShebang = (tree) ->
+  if tree.children.0.symbol is 'Shebang'
+    return tree.children.0.literal
+
+  return null
+
+_transpile = (pair, options) ->
+  if not options?
+    options = {}
+
   ast = pair.1
+  shebang = extractShebang ast
+
   variables = [[]]
   types = {}
   hasCurry = false
 
   pair.1 = addCurryDeclaration transpile(ast.children).join('')
-  pair
 
+  if not options.bare
+    pair.1 = `(function () {\n${pair[1]}})();`
+
+  if shebang
+    pair.1 = `${shebang}${pair[1]}`
+
+  pair
 
 module.exports = _transpile

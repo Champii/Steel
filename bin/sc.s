@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 _           = require 'lodash'
 fs          = require 'fs.extra'
 argv        = require 'commander'
@@ -16,6 +17,7 @@ argv
   .option '-o, --output <folder>', 'File/folder of output'
   .option '-s, --strict', 'Disallow implicite use of <Any> type'
   .option '-t, --typecript', 'Output Typescript instead of Javascript'
+  .option '-b, --bare', 'Dont wrap into top level anonymous function'
   .parse process.argv
 
 paths = argv.args
@@ -28,7 +30,7 @@ if argv.compile
   if argv.output
     compilePath = argv.output
 
-  steel.transpileStream(gulp.src paths).pipe(gulp.dest compilePath)
+  steel.transpileStream(gulp.src(paths), argv).pipe(gulp.dest compilePath)
 
 else
   require path.resolve './', paths[0]

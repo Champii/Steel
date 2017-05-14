@@ -178,7 +178,7 @@ foo(1, 2);
 
       });
 
-      describe('Shebang (!)', () => {
+      describe('Bang (!)', () => {
 
         it('should produce and call with no arguments', () => {
           const string = `foo = -> 1
@@ -372,7 +372,7 @@ foo(1, 2);
 
       });
 
-      describe('Shebang (!)', () => {
+      describe('Bang (!)', () => {
 
         it('should produce and call with no arguments', () => {
           const string = `foo = ~> 1

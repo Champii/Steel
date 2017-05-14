@@ -21,11 +21,11 @@ inspect = -> console.log util.inspect it, depth: null
 
 fs = bluebird.promisifyAll fs
 
-exports.transpileStream = (stream) ->
-  stream.on 'data', exports.transpile
+exports.transpileStream = (stream, options) ->
+  stream.on 'data', (data) -> exports.transpile data, options
   compile stream
 
-exports.transpile = (file) ->
+exports.transpile = (file, options) ->
   pair = [path.basename(file.path), file.contents]
 
   preprocessed   = preproc pair
@@ -34,11 +34,9 @@ exports.transpile = (file) ->
   inspect ast
 
   transformedAst = transformAst ast
-  transpiled     = transpile transformedAst
+  transpiled     = transpile transformedAst, options
 
   console.log transpiled.1
-
-  transpiled.1 = `(function () {${transpiled[1]}})();`
 
   file.contents = new Buffer transpiled.1
   file.path = path.resolve(path.dirname(file.path), path.basename(file.path, '.s') + '.ts')
@@ -50,7 +48,7 @@ exports._transpileStringToTs = (input) ->
   preprocessed   = preproc pair
   ast            = generateAst preprocessed
   transformedAst = transformAst ast
-  transpiled     = transpile transformedAst
+  transpiled     = transpile transformedAst, bare: true
 
   Promise.resolve transpiled.1
 

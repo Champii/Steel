@@ -20,7 +20,11 @@ ws              = " "* { return null }
 Statement
   = ws
     body:(
-      Comment
+      FunctionDeclaration
+    // / Block
+    // / VariableStatement
+    / Comment
+    // / VariableStatement
     / Expression
     / EmptyStatement
     )

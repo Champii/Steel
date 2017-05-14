@@ -46,6 +46,28 @@ else
     ;
   });
 
+  it('should have a shebang', () => {
+    const string = `#!/usr/bin/env node
+if 1
+  a
+else
+  b
+`;
+    const promise = lightscript._transpileStringToTs(string);
+
+    return expect(promise).to.be.fulfilled
+      .then(res => {
+        expect(res).to.eq(`#!/usr/bin/env node
+if (1) {
+  a;
+} else {
+  b;
+}
+`);
+      })
+    ;
+  });
+
   it('should fail', () => {
     const string = `a = 2a`;
     const promise = Promise

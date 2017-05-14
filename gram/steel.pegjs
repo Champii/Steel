@@ -76,6 +76,7 @@
   };
 }
 
-Root
-  = head:Statement+
-  { return createNode('Root', head); }
+Program
+  = shebang:Shebang?
+    statm:Statement*
+  { return createNode('Program', _.compact([shebang]).concat(statm)); }
