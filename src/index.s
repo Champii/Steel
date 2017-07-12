@@ -10,7 +10,6 @@ Vinyl        = require 'vinyl'
 PassThrough  = require 'stream' .PassThrough
 Module       = require 'module'
 
-
 preproc      = require './preproc'
 generateAst  = require './generateAst'
 transformAst = require './transformAst'
@@ -18,6 +17,7 @@ transpile    = require './transpile'
 compile      = require './compile'
 
 inspect = -> console.log util.inspect it, depth: null
+printFileAndLines = (content) -> content.split('\n').forEach((v, i) -> console.log i, v)
 
 fs = bluebird.promisifyAll fs
 
@@ -28,15 +28,16 @@ exports.transpileStream = (stream, options) ->
 exports.transpile = (file, options) ->
   pair = [path.basename(file.path), file.contents]
 
+  # console.log pair
   preprocessed   = preproc pair
   ast            = generateAst preprocessed
 
-  inspect ast
+  # inspect ast
 
   transformedAst = transformAst ast
   transpiled     = transpile transformedAst, options
 
-  console.log transpiled.1
+  # printFileAndLines transpiled.1
 
   file.contents = new Buffer transpiled.1
   file.path = path.resolve(path.dirname(file.path), path.basename(file.path, '.s') + '.ts')

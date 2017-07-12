@@ -294,6 +294,9 @@ tokens.BooleanExpr = (node) ->
 
   res.join(' ')
 
+tokens.BooleanLiteral = (node) ->
+  node.literal
+
 tokens.If = (node) ->
   res = transpile(node.children)
 

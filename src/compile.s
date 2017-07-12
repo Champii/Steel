@@ -27,12 +27,12 @@ oldFinish = gts.reporter.defaultReporter!.finish
 reporter = ->
   errs = []
   return
-    error: (err) -> errs.push err.message
+    error: (err) -> errs.push(err.message)
     finish: (results) ->
       if results.emitSkipped
         # Hard fix for when gulp-typescript outputs errors twice
-        size = errs.length
-        errs.splice size / 2, size / 2
+        size = errs.length / 2
+        errs.splice size, size
 
       errs.map -> console.log it
       oldFinish results

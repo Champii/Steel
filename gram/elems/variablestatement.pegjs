@@ -1,133 +1,134 @@
-VariableStatement
-  = VariableDeclarationList
+// VariableStatement
+//   = VariableDeclarationList
 
-VariableDeclarationList
-  = VariableDeclaration (',' VariableDeclaration)*
+// VariableDeclarationList
+//   = VariableDeclaration (',' VariableDeclaration)*
 
-VariableDeclaration
-  = Identifier Initialiser?
+// VariableDeclaration
+//   = Identifier Initialiser?
 
-Initialiser
-  = '=' AssignmentExpression
+// Initialiser
+//   = ws '=' ws Assignable
+//   // = '=' AssignmentExpression
 
-AssignmentExpression
-  = (LeftHandSideExpression AssignmentOperator AssignmentExpression)
-  / ConditionalExpression
+// AssignmentExpression
+//   = (LeftHandSideExpression AssignmentOperator AssignmentExpression)
+//   / ConditionalExpression
 
-LeftHandSideExpression
-  = CallExpression
-  / NewExpression
+// LeftHandSideExpression
+//   = CallExpression
+//   / NewExpression
 
-NewExpression
-  = MemberExpression
-  / ('new' NewExpression)
+// NewExpression
+//   = MemberExpression
+//   / ('new' NewExpression)
 
-CallExpression
-  = MemberExpression
-    Arguments
-    (
-      Arguments
-    / ('[' Expression ']')
-    / ('.' IdentifierName)
-    )*
+// CallExpression
+//   = MemberExpression
+//     Arguments
+//     (
+//       Arguments
+//     / ('[' Expression ']')
+//     / ('.' IdentifierName)
+//     )*
 
-MemberExpression
-  = (
-      PrimaryExpression
-    / FunctionExpression
-    / ('new' MemberExpression Arguments)
-    )
-    (
-      ('[' Expression ']')
-    / ('.' IdentifierName)
-    )*
+// MemberExpression
+//   = (
+//       PrimaryExpression
+//     / FunctionExpression
+//     / ('new' MemberExpression Arguments)
+//     )
+//     (
+//       ('[' Expression ']')
+//     / ('.' IdentifierName)
+//     )*
 
-PrimaryExpression
-  = 'this'
-  / Identifier
-  / Literal
-  / Array
-  / Object
-  / ('(' Expression ')')
+// PrimaryExpression
+//   = 'this'
+//   / Identifier
+//   / Literal
+//   / Array
+//   / Object
+//   / ('(' Expression ')')
 
-Arguments
-  = '('
-    (
-      AssignmentExpression
-      (',' AssignmentExpression)*
-    )?
-    ')'
+// Arguments
+//   = '('
+//     (
+//       AssignmentExpression
+//       (',' AssignmentExpression)*
+//     )?
+//     ')'
 
-AssignmentOperator
-  = '='
-  / '*='
-  / '/='
-  / '%='
-  / '+='
-  / '-='
-  / '<<='
-  / '>>='
-  / '>>>='
-  / '&='
-  / '^='
-  / '|='
+// AssignmentOperator
+//   = '='
+//   / '*='
+//   / '/='
+//   / '%='
+//   / '+='
+//   / '-='
+//   / '<<='
+//   / '>>='
+//   / '>>>='
+//   / '&='
+//   / '^='
+//   / '|='
 
-ConditionalExpression
-  = LogicalORExpression
-    ('?' AssignmentExpression ':' AssignmentExpression)?
+// ConditionalExpression
+//   = LogicalORExpression
+//     ('?' AssignmentExpression ':' AssignmentExpression)?
 
-LogicalORExpression
-  = LogicalANDExpression
-    ('||' LogicalANDExpression)*
+// LogicalORExpression
+//   = LogicalANDExpression
+//     ('||' LogicalANDExpression)*
 
-LogicalANDExpression
-  = BitwiseORExpression
-    ('&&' BitwiseORExpression)*
+// LogicalANDExpression
+//   = BitwiseORExpression
+//     ('&&' BitwiseORExpression)*
 
-BitwiseORExpression
-  = BitwiseXORExpression
-    ('|' BitwiseXORExpression)*
+// BitwiseORExpression
+//   = BitwiseXORExpression
+//     ('|' BitwiseXORExpression)*
 
-BitwiseXORExpression
-  = BitwiseANDExpression
-    ('^' BitwiseANDExpression)*
+// BitwiseXORExpression
+//   = BitwiseANDExpression
+//     ('^' BitwiseANDExpression)*
 
-BitwiseANDExpression
-  = EqualityExpression
-    ('&' EqualityExpression)*
+// BitwiseANDExpression
+//   = EqualityExpression
+//     ('&' EqualityExpression)*
 
-EqualityExpression
-  = RelationalExpression
-    (('==' / '!=' / '===' / '!==') RelationalExpression)*
+// EqualityExpression
+//   = RelationalExpression
+//     (('==' / '!=' / '===' / '!==') RelationalExpression)*
 
-RelationalExpression
-  = ShiftExpression
-    (( '<' / '>' / '<=' / '>=' / 'instanceof' / 'in') ShiftExpression)*
+// RelationalExpression
+//   = ShiftExpression
+//     (( '<' / '>' / '<=' / '>=' / 'instanceof' / 'in') ShiftExpression)*
 
-ShiftExpression
-  = AdditiveExpression
-    (( '<<' / '>>' / '>>>') AdditiveExpression)*
+// ShiftExpression
+//   = AdditiveExpression
+//     (( '<<' / '>>' / '>>>') AdditiveExpression)*
 
-AdditiveExpression
-  = MultiplicativeExpression
-    (( '+' / '-') MultiplicativeExpression)*
+// AdditiveExpression
+//   = MultiplicativeExpression
+//     (( '+' / '-') MultiplicativeExpression)*
 
-MultiplicativeExpression
-  = UnaryExpression
-    (( '*' / '/' / '%') UnaryExpression)*
+// MultiplicativeExpression
+//   = UnaryExpression
+//     (( '*' / '/' / '%') UnaryExpression)*
 
-UnaryExpression
-  = PostfixExpression
-  / 'delete' UnaryExpression
-  / 'void' UnaryExpression
-  / 'typeof' UnaryExpression
-  / '++' UnaryExpression
-  / '--' UnaryExpression
-  / '+' UnaryExpression
-  / '-' UnaryExpression
-  / '~' UnaryExpression
-  / '!' UnaryExpression
+// UnaryExpression
+//   = PostfixExpression
+//   / 'delete' UnaryExpression
+//   / 'void' UnaryExpression
+//   / 'typeof' UnaryExpression
+//   / '++' UnaryExpression
+//   / '--' UnaryExpression
+//   / '+' UnaryExpression
+//   / '-' UnaryExpression
+//   / '~' UnaryExpression
+//   / '!' UnaryExpression
 
-PostfixExpression
-  = LeftHandSideExpression
-    ( '++' / '--' )?
+// PostfixExpression
+//   = LeftHandSideExpression
+//     ( '++' / '--' )?

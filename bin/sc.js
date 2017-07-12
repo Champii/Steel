@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 (function () {
     let _ = require('lodash');
     let fs = require('fs.extra');
@@ -17,7 +18,9 @@
         if (argv.output) {
             compilePath = argv.output;
         }
-        steel.transpileStream(gulp.src(paths), argv).pipe(gulp.dest(compilePath));
+        steel.transpileStream(gulp.src(paths), argv).pipe(gulp.dest(compilePath)).on('error', function (err) {
+            return process.exit(1);
+        });
     }
     else {
         require(path.resolve('./', paths[0]));

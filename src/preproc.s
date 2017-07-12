@@ -1,3 +1,5 @@
+_ = require 'lodash'
+
 countTabs = (it) ->
   i = 0
   count = 0
@@ -18,10 +20,10 @@ indent = '  '
 
 preprocessor = (input) ->
   instrOrig = input
-    .toString!
-    .split('\n')
-    .filter((val) -> val.length)
-    .concat([''])
+  .toString!
+  .split('\n')
+  .filter((val) -> val.length)
+  .concat([''])
 
   tabCount = 0
   i = 0
@@ -29,8 +31,9 @@ preprocessor = (input) ->
   while i < instrOrig.length
     line = instrOrig[i]
     newTabCount = countTabs line
+    trimed = instrOrig[i].trim!
 
-    if tabCount < newTabCount && instrOrig[i].trim().substr(0, 2) isnt '|>'
+    if tabCount < newTabCount && trimed.substr(0, 2) isnt '|>'
       instrOrig[i - 1] = instrOrig[i - 1] + '@{'
       tabCount = newTabCount
     else if tabCount > newTabCount
@@ -44,8 +47,7 @@ preprocessor = (input) ->
 
   instrOrig.join '\n'
 
-_ = require 'lodash'
-
 module.exports = (pair) ->
   pair.1 = preprocessor pair.1
+  # console.log pair.1
   pair

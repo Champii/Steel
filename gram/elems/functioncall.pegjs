@@ -31,7 +31,7 @@ CallArg
   = args:CallArg_
   { return createNode('CallArg', args); }
 CallArg_
-  = head: Assignable
+  = head: (Operation / Assignable)
     tail: CallArgComa?
   {
     return _([head].concat(tail))

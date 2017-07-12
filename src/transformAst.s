@@ -9,8 +9,8 @@ createNode = (symbol, children, literal) ->
 
   if literal == null
     literal = _(children)
-      .map 'literal'
-      .join!
+    .map 'literal'
+    .join!
 
   return
     symbol
@@ -18,9 +18,10 @@ createNode = (symbol, children, literal) ->
     children
 
 hasNode = (node, symbol) ->
-  node.children
-    .map((child) -> child.symbol)
-    .includes symbol
+  node
+  .children
+  .map((child) -> child.symbol)
+  .includes(symbol)
 
 tokens.FunctionDeclaration = (node) ->
   node.children = visit node.children

@@ -5,6 +5,7 @@ Assignation "Assignation"
     / ArrayDestruct
     / Identifier
     )
+    ws
     type:InlineTypeDeclaration?
     AssignationOp
     tail:Expression

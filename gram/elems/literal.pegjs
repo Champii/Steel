@@ -18,50 +18,50 @@
 //     BackQuote
 //   { return createNode('TemplateString', [], text()); }
 
-// SingleQuote "SingleQuote"
-//   = "'"
+SingleQuote "SingleQuote"
+  = "'"
 
-// DoubleQuote "DoubleQuote"
-//   = '"'
+DoubleQuote "DoubleQuote"
+  = '"'
 
-// BackQuote "BackQuote"
-//   = "`"
+BackQuote "BackQuote"
+  = "`"
 
-// SingleQuoteChar
-//   = !(SingleQuote)
-//     c:Char
-//   { return c; }
+SingleQuoteChar
+  = !(SingleQuote)
+    c:Char
+  { return c; }
 
-// DoubleQuoteChar
-//   = !(DoubleQuote)
-//     c:Char
-//   { return c; }
+DoubleQuoteChar
+  = !(DoubleQuote)
+    c:Char
+  { return c; }
 
-// Char "Char"
-//   = Unescaped
-//   / Escape sequence:(
-//       "`"
-//     / SingleQuote
-//     / DoubleQuote
-//     / "\\"
-//     / "/"
-//     / "b" { return "\b"; }
-//     / "f" { return "\f"; }
-//     / "n" { return "\n"; }
-//     / "r" { return "\r"; }
-//     / "t" { return "\t"; }
-//   )
-//   { return sequence; }
+Char "Char"
+  = Unescaped
+  / Escape sequence:(
+      "`"
+    / SingleQuote
+    / DoubleQuote
+    / "\\"
+    / "/"
+    / "b" { return "\b"; }
+    / "f" { return "\f"; }
+    / "n" { return "\n"; }
+    / "r" { return "\r"; }
+    / "t" { return "\t"; }
+  )
+  { return sequence; }
 
-// Escape "Escape"
-//   = "\\"
+Escape "Escape"
+  = "\\"
 
-// Unescaped "Unescaped"
-//   = [^\0-\x1F\x22\x5C'`]
+Unescaped "Unescaped"
+  = [^\0-\x1F\x22\x5C'`]
 
-// Number "Number"
-//   = [0-9]+
-//   { return createNode('Number', [], text()); }
+Number "Number"
+  = [0-9]+
+  { return createNode('Number', [], text()); }
 
 Literal
   = body:(
@@ -78,9 +78,11 @@ NullLiteral
   { return createNode('NullLiteral', [], text()); }
 
 BooleanLiteral
-  = TrueToken
-  / FalseToken
-  { return createNode('BooleanLiteral', [], text()); }
+  = val:(
+      TrueToken
+    / FalseToken
+    )
+  { return createNode('BooleanLiteral', [], val); }
 
 // The "!(IdentifierStart / DecimalDigit)" predicate is not part of the official
 // grammar, it comes from text in section 7.8.3.
@@ -125,9 +127,12 @@ HexDigit
   = [0-9a-f]i
 
 StringLiteral "string"
-  = '"' chars:DoubleStringCharacter* '"'
-  / "'" chars:SingleStringCharacter* "'"
-  { return createNode('StringLiteral', [], text()); }
+  = res:(
+      '"' chars:DoubleStringCharacter* '"' { return '"' + chars.join('') + '"'; }
+    / "'" chars:SingleStringCharacter* "'" { return "'" + chars.join('') + "'"; }
+    / "`" chars:TemplateStringCharacter* "`" { return '`' + chars.join('') + '`'; }
+    )
+  { return createNode('StringLiteral', [], res); }
 
 DoubleStringCharacter
   = !('"' / "\\" / LineTerminator) SourceCharacter { return text(); }
@@ -136,6 +141,11 @@ DoubleStringCharacter
 
 SingleStringCharacter
   = !("'" / "\\" / LineTerminator) SourceCharacter { return text(); }
+  / "\\" sequence:EscapeSequence { return sequence; }
+  / LineContinuation
+
+TemplateStringCharacter
+  = !("`" / "\\" / LineTerminator) SourceCharacter { return text(); }
   / "\\" sequence:EscapeSequence { return sequence; }
   / LineContinuation
 
@@ -155,13 +165,15 @@ CharacterEscapeSequence
 SingleEscapeCharacter
   = "'"
   / '"'
+  / '`'
   / "\\"
-  / "b"  { return "\b"; }
-  / "f"  { return "\f"; }
-  / "n"  { return "\n"; }
-  / "r"  { return "\r"; }
-  / "t"  { return "\t"; }
-  / "v"  { return "\v"; }
+  / "b"  { return "\\b"; }
+  / "f"  { return "\\f"; }
+  / "n"  { return "\\n"; }
+  / "r"  { return "\\r"; }
+  / "t"  { return "\\t"; }
+  / "v"  { return "\\v"; }
+  / "n"  { return "\\n"; }
 
 NonEscapeCharacter
   = !(EscapeCharacter / LineTerminator) SourceCharacter { return text(); }
