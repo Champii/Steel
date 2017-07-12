@@ -1,7 +1,6 @@
 _            = require 'lodash'
 fs           = require 'fs'
 ts           = require 'typescript'
-tiny         = require 'tiny-parser'
 hook         = require 'node-hook'
 util         = require 'util'
 path         = require 'path'
