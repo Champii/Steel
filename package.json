@@ -1,6 +1,6 @@
 {
   "name": "steel-lang",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Strongly Typed Experimental Expressive Language",
   "main": "index.js",
   "author": "Champii",
