@@ -105,6 +105,26 @@ Transpile into
 
 Compiler name is `sc`, and stands for `Steel Compiler`.
 
+### Usage
+  ```bash
+  $> sc -h
+
+    Usage: sc [options] <files ...>
+
+
+    Options:
+
+      -V, --version          output the version number
+      -c, --compile          Compile files
+      -p, --print            Print files
+      -o, --output <folder>  File/folder of output
+      -s, --strict           Disallow implicit use of <Any> type
+      -t, --typescript       Output Typescript instead of Javascript (no typechecking)
+      -b, --bare             Dont wrap into top level anonymous function
+      -q, --quiet            Dont output types errors/warnings (useful with -p)
+      -h, --help             output usage information
+  ```
+
 ### Compile and execute on the fly
   ```bash
   sc file.s
