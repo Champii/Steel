@@ -11,10 +11,17 @@ TypeExpression
 
 FunctionTypeExpression
   = ws "->" ws
-    id:Identifier
+    id:Type
   { return id; }
 
 InlineTypeDeclaration
   = ws ":" ws
-    id:Identifier
+    id:Type
   { return id; }
+
+Type
+  = type:(
+      (Identifier Dot Type) { return text(); }
+    / Identifier
+    )
+  { return type; }

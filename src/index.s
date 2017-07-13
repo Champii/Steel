@@ -16,11 +16,20 @@ transpile    = require './transpile'
 compile      = require './compile'
 
 inspect = -> console.log util.inspect it, depth: null
-printFileWithLines = (content) -> content.split('\n').forEach((v, i) -> console.log `${i}: ${v}`)
+
+printFileWithLines := string -> void
+printFileWithLines = (content) -> content.split '\n' .forEach (v, i) -> console.log `${i}: ${v}`
 
 fs = bluebird.promisifyAll fs
 
-exports.transpileStream = (stream, options) ->
+interface SteelOptions
+  quiet?:      boolean
+  bare?:       boolean
+  print?:      boolean
+  strict?:     boolean
+  typescript?: boolean
+
+exports.transpileStream = (stream, options: SteelOptions) ->
   if not options?
     options = {}
 

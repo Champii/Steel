@@ -377,7 +377,6 @@ TODO:
   * func type for interface
   * abstract
   * Transpile code in template strings
-  * Better scoped variables (bug in 'let')
   * Better error system (more details, more accuracy)
   * Std lib
   * Multiline string
