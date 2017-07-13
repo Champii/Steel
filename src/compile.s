@@ -12,6 +12,7 @@ compilerOptions =
   moduleResolution: 'node'
   lib: ['es2015', 'es2016']
   noEmitOnError: true
+  noImplicitAny: false
 
 fileCompilerOptions =
   target: ts.ScriptTarget.ES6
@@ -24,7 +25,7 @@ tss = new TypeScriptSimple fileCompilerOptions
 
 oldFinish = gts.reporter.defaultReporter!.finish
 
-reporter = ->
+reporter = (options) ->
   errs = []
   return
     error: (err) -> errs.push(err.message)
@@ -34,11 +35,14 @@ reporter = ->
         size = errs.length / 2
         errs.splice size, size
 
-      errs.map -> console.log it
-      oldFinish results
+      if not options.quiet
+        errs.map -> console.log it
+        oldFinish results
 
-module.exports = (stream) ->
-  stream.pipe gts compilerOptions, reporter!
+module.exports = (stream, options) ->
+  compilerOptions.noImplicitAny = !!options.strict
+
+  stream.pipe gts compilerOptions, reporter options
 
 module.exports.file = (file) ->
   try

@@ -370,3 +370,4 @@ TODO:
     - Comments
   * Support tsconfig.json
   * (Plugin system ?)
+  * |< operator for chained call with flipped arguments

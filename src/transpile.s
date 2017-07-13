@@ -87,16 +87,12 @@ tokens.Existance = (node) ->
 
 tokens.ParensAssignable = (node) ->
   res = transpile node.children
-
   parens = res.shift()
-
   `(${res.join('')})`
 
 tokens.ParensExpression = (node) ->
   res = transpile node.children
-
   parens = res.shift()
-
   `(${parens})${res.join('')}`
 
 tokens.Identifier = (node) ->

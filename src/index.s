@@ -16,13 +16,20 @@ transpile    = require './transpile'
 compile      = require './compile'
 
 inspect = -> console.log util.inspect it, depth: null
-printFileAndLines = (content) -> content.split('\n').forEach((v, i) -> console.log i, v)
+printFileWithLines = (content) -> content.split('\n').forEach((v, i) -> console.log `${i}: ${v}`)
 
 fs = bluebird.promisifyAll fs
 
 exports.transpileStream = (stream, options) ->
+  if not options?
+    options = {}
+
   stream.on 'data', (data) -> exports.transpile data, options
-  compile stream
+
+  if options.typescript
+    return stream
+
+  compile stream, options
 
 exports.transpile = (file, options) ->
   pair = [path.basename(file.path), file.contents]
@@ -35,8 +42,6 @@ exports.transpile = (file, options) ->
 
   transformedAst = transformAst ast
   transpiled     = transpile transformedAst, options
-
-  # printFileAndLines transpiled.1
 
   file.contents = new Buffer transpiled.1
   file.path = path.resolve(path.dirname(file.path), path.basename(file.path, '.s') + '.ts')
