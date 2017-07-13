@@ -3,6 +3,7 @@ Expression "Expression"
   / Class
   / Interface
   / Import
+  / Require
   / Operation
   / BooleanExpr
   / Return

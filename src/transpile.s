@@ -492,7 +492,16 @@ tokens.ChainedCall = (node) ->
 tokens.This = (node) ->
   'this'
 
+importType = ''
+
 tokens.Import = (node) ->
+  importType = 'import'
+  res = transpile node.children
+
+  `${res.join('')}`
+
+tokens.Require = (node) ->
+  importType = 'const'
   res = transpile node.children
 
   `${res.join('')}`
@@ -516,7 +525,7 @@ getStringBaseName = (lit) ->
 
 stringImport = (lit) ->
   val = getStringBaseName lit
-  return `import ${val} = require('${lit}');\n`
+  return `${importType} ${val} = require('${lit}');\n`
 
 importCommonJs = (node) ->
   id = node.children[0].literal
@@ -528,12 +537,12 @@ importCommonJs = (node) ->
     return stringImport id
 
   if node.children.length is 1
-    return `import ${id} = require('${id}');\n`
+    return `${importType} ${id} = require('${id}');\n`
 
   fromId = node.children[1]
 
   if fromId.children[0].symbol is 'Identifier'
-    return `import ${fromId.children[0].literal} = require('${id}');\n`
+    return `${importType} ${fromId.children[0].literal} = require('${id}');\n`
 
   if fromId.children[0].symbol is 'ObjectDestruct'
     destruct = transpile(fromId.children).join('')
@@ -542,14 +551,14 @@ importCommonJs = (node) ->
 
     if node.children[0].symbol is 'StringLiteral'
       tmpId = getStringBaseName tmpId
-      res = `import _${tmpId} = require('${id}');\n`
+      res = `${importType} _${tmpId} = require('${id}');\n`
     else
-      res = `import _${id} = require('${id}');\n`
+      res = `${importType} _${id} = require('${id}');\n`
 
     res += `let ${destruct} = _${tmpId};\n`
     return res
 
-  return `import ${transpile(fromId.children).join('')} = require('${id}');\n`
+  return `${importType} ${transpile(fromId.children).join('')} = require('${id}');\n`
 
 tokens.ImportLine = (node) ->
   forcedVersion = 'common'

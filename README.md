@@ -29,11 +29,17 @@ At term, this language aim to be more functional, and might borrow some concepts
 ### Basics
 
 ```livescript
+import
+  fs
+  path: { resolve }
+  './localFile'
+  './localFile2': customName
+
 foo := number -> number -> number
 foo = (a, b) -> a + b
 
 bar = (c: number, d: number): number ~>
-  if c? and d?
+  if c? and d? and d isnt 0
     c + d
   else
     0
@@ -61,11 +67,16 @@ Transpiled in TypeScript with `sc -cts source.s` turns into:
 
 ```typescript
 (function () {
+  import fs = require('fs');
+  import _path = require('path');
+  let {resolve} = _path;
+  import localFile = require('./localFile');
+  import customName = require('./localFile2');
   let foo:(a:number,b:number) => number = function (a, b) {
     return a + b;
   };
   let bar = (c:number, d:number): number => {
-    if ((c != null) && (d != null)) {
+    if ((c != null) && (d != null) && d !== 0) {
       return c + d;
     } else {
       return 0;
@@ -358,6 +369,8 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   let {resolve} = _path;
   import bar = require('./foo/bar');
   ```
+
+  You can use `require` instead of `import` to make a regular require
 
 TODO:
   * decimals

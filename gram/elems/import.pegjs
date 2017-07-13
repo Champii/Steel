@@ -1,5 +1,10 @@
+Require
+  = "require" ws
+    block:ImportBlock
+  { return createNode('Require', block); }
+
 Import
-  = "import" ws
+  = ("import") ws
     block:ImportBlock
   { return createNode('Import', block); }
 
