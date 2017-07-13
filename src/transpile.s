@@ -604,7 +604,8 @@ _transpile = (pair, options) ->
   pair.1 = addCurryDeclaration transpile(ast.children).join('')
 
   if not options.bare
-    pair.1 = `(function () {\n${pair[1]}})();`
+    pair.1 = pair.1.split '\n' .map(-> `  ${it}`).join '\n'
+    pair.1 = `(function () {\n${pair[1]}\n})();`
 
   if shebang
     pair.1 = `${shebang}${pair[1]}`

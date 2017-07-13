@@ -57,46 +57,47 @@ class Dog: Animal
 dog: Dog = new Dog 1
 ```
 
-Transpiled in TypeScript with `sc -c -t -s source.s` turns into:
+Transpiled in TypeScript with `sc -cts source.s` turns into:
 
 ```typescript
 (function () {
-let foo:(a:number,b:number) => number = function (a, b) {
-  return a + b;
-};
-let bar = (c:number, d:number): number => {
-  if ((c != null) && (d != null)) {
-    return c + d;
-  } else {
-    return 0;
-  }
-};
-let nonReturning = function (it?:any) {
-  1;
-};
-let map = curry$(function (f:any, arr:any) {
-  return arr.map(f);
-});
-let filter = curry$(function (f:any, arr:any) {
-  return arr.filter(f);
-});
-(filter(function (it:any) {
-  return it>2;
-})(map(function (it:any) {
-  return it+2;
-})([1, 2, 3])));
-class Animal {
-  a = 1;
-  b(it?:any) {
-    return 2;
-  }
-  constructor(val:number) {
-    this.a = val;
-  }
-};
-class Dog extends Animal {};
-let dog:Dog = new Dog(1);
-function curry$(f: any, bound?: any){ let context: any, _curry: any = function(args?: any){ return f.length > 1 ? function(){ var params = args ? args.concat() :[]; context = bound ? context || this : this; return params.push.apply(params, arguments) < f.length && arguments.length ? _curry.call(context, params) : f.apply(context, params); } : f; }; return _curry(); }})();
+  let foo:(a:number,b:number) => number = function (a, b) {
+    return a + b;
+  };
+  let bar = (c:number, d:number): number => {
+    if ((c != null) && (d != null)) {
+      return c + d;
+    } else {
+      return 0;
+    }
+  };
+  let nonReturning = function (it?:any) {
+    1;
+  };
+  let map = curry$(function (f:any, arr:any) {
+    return arr.map(f);
+  });
+  let filter = curry$(function (f:any, arr:any) {
+    return arr.filter(f);
+  });
+  (filter(function (it:any) {
+    return it>2;
+  })(map(function (it:any) {
+    return it+2;
+  })([1, 2, 3])));
+  class Animal {
+    a = 1;
+    b(it?:any) {
+      return 2;
+    }
+    constructor(val:number) {
+      this.a = val;
+    }
+  };
+  class Dog extends Animal {};
+  let dog:Dog = new Dog(1);
+  function curry$(f: any, bound?: any){ let context: any, _curry: any = function(args?: any){ return f.length > 1 ? function(){ var params = args ? args.concat() :[]; context = bound ? context || this : this; return params.push.apply(params, arguments) < f.length && arguments.length ? _curry.call(context, params) : f.apply(context, params); } : f; }; return _curry(); }
+})();
 ```
 
 ## Install
@@ -359,6 +360,8 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   ```
 
 TODO:
+  * decimals
+  * return loops
   * typeof, delete, instanceof, ...
   * Exports
   * Expression as assignable (if, while, ...)
