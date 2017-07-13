@@ -13,7 +13,7 @@ describe('Main process', () => {
 
   describe('Full compile', () => {
 
-    it('should process file with no error', (done) => {
+    it('should process file with no error', function (done) {
       this.timeout(5000);
       const pair = new Vinyl({ path: '/tmp/test.s', contents: new Buffer(`a = []`)});
       const passStream = new stream.PassThrough({ objectMode: true });
@@ -41,7 +41,7 @@ describe('Main process', () => {
 
     });
 
-    it('should process file with error', (done) => {
+    it('should process file with error', function (done) {
       this.timeout(5000);
       const pair = new Vinyl({ path: '/tmp/test.s', contents: new Buffer(`a: number = 'a'`)});
       const passStream = new stream.PassThrough({ objectMode: true });
