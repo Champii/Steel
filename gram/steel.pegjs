@@ -19,7 +19,7 @@
     }
 
     if (args === null) {
-      const argId = createNode('Identifier', [], 'it?');
+      const argId = createNode('Identifier', [], 'it?:any');
       args = createNode('FunctionArguments', [argId]);
     }
 
@@ -31,7 +31,7 @@
   };
 
   const FunctionShorthand = (op, ass) => {
-    const argId = createNode('Identifier', [], 'it');
+    const argId = createNode('Identifier', [], 'it:any');
     const finalId = createNode('Identifier', [], `it${op.literal}${ass.literal}`);
     const statm = createNode('Statement', [finalId]);
     const block = createNode('FunctionBlock', [statm]);

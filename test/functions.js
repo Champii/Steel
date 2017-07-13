@@ -19,7 +19,7 @@ describe('Functions', () => {
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = function (it?) {
+            expect(res).to.eq(`let foo = function (it?:any) {
   return 1;
 };
 `);
@@ -33,7 +33,7 @@ describe('Functions', () => {
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = function (it?) {
+            expect(res).to.eq(`let foo = function (it?:any) {
   1;
 };
 `);
@@ -99,7 +99,7 @@ foo()`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = function (it?) {
+              expect(res).to.eq(`let foo = function (it?:any) {
   return 1;
 };
 foo();
@@ -187,7 +187,7 @@ foo!`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = function (it?) {
+              expect(res).to.eq(`let foo = function (it?:any) {
   return 1;
 };
 foo();
@@ -212,7 +212,7 @@ foo();
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = (it?) => {
+            expect(res).to.eq(`let foo = (it?:any) => {
   return 1;
 };
 `);
@@ -226,7 +226,7 @@ foo();
 
         return expect(promise).to.be.fulfilled
           .then(res => {
-            expect(res).to.eq(`let foo = (it?) => {
+            expect(res).to.eq(`let foo = (it?:any) => {
   1;
 };
 `);
@@ -293,7 +293,7 @@ foo()`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = (it?) => {
+              expect(res).to.eq(`let foo = (it?:any) => {
   return 1;
 };
 foo();
@@ -381,7 +381,7 @@ foo!`;
 
           return expect(promise).to.be.fulfilled
             .then(res => {
-              expect(res).to.eq(`let foo = (it?) => {
+              expect(res).to.eq(`let foo = (it?:any) => {
   return 1;
 };
 foo();
@@ -398,7 +398,7 @@ foo();
 
   describe('Curry', () => {
 
-    const curryFunc = `function curry$(f, bound?){ var context, _curry = function(args?){ return f.length > 1 ? function(){ var params = args ? args.concat() :[]; context = bound ? context || this : this; return params.push.apply(params, arguments) < f.length && arguments.length ? _curry.call(context, params) : f.apply(context, params); } : f; }; return _curry(); }`;
+    const curryFunc = `function curry$(f: any, bound?: any){ let context: any, _curry: any = function(args?: any){ return f.length > 1 ? function(){ var params = args ? args.concat() :[]; context = bound ? context || this : this; return params.push.apply(params, arguments) < f.length && arguments.length ? _curry.call(context, params) : f.apply(context, params); } : f; }; return _curry(); }`;
 
     describe('Declaration', () => {
 

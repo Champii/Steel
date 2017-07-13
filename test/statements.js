@@ -18,7 +18,7 @@ bar = -> 1
     return expect(promise).to.be.fulfilled
       .then(res => {
         expect(res).to.eq(`let foo = 1;
-let bar = function (it?) {
+let bar = function (it?:any) {
   return 1;
 };
 `);

@@ -29,7 +29,7 @@ At term, this language aim to be more functional, and might borrow some concepts
 ### Basics
 
 ```livescript
-foo: number -> number -> number
+foo := number -> number -> number
 foo = (a, b) -> a + b
 
 bar = (c: number, d: number): number ~>
@@ -39,6 +39,9 @@ bar = (c: number, d: number): number ~>
     0
 
 nonReturning = !-> 1
+
+map    = (f: any, arr: any) --> arr.map f
+filter = (f: any, arr: any) --> arr.filter f
 
 [1, 2, 3]
   |> map (+ 2)
@@ -51,49 +54,49 @@ class Animal
 
 class Dog: Animal
 
-dog: Dog = new Dog
+dog: Dog = new Dog 1
 ```
 
-Transpile into
+Transpiled in TypeScript with `sc -c -t -s source.s` turns into:
 
 ```typescript
 (function () {
-  const foo: (a: number, b: number) => number = function (a, b) {
-    return a + b;
-  };
-
-  const bar = (c: number, d: number): number => {
-    if ((c != null) && (d != null)) {
-      return c + d;
-    } else {
-      return 0;
-    }
-  };
-
-  filter((function (it?) {
-    return it > 2;
-  }), map((function (it?) {
-    return it + 2;
-  }), [1, 2, 3]));
-
-  const nonReturning = function () {
-    1;
-  };
-
-  class Animal {
-    a = 1
-    b() {
-      return 1;
-    }
-    constructor(val:number) {
-      this.a = val;
-    }
+let foo:(a:number,b:number) => number = function (a, b) {
+  return a + b;
+};
+let bar = (c:number, d:number): number => {
+  if ((c != null) && (d != null)) {
+    return c + d;
+  } else {
+    return 0;
   }
-
-  class Dog extends Animal {};
-
-  let dog: Dog = new Dog();
-})();
+};
+let nonReturning = function (it?:any) {
+  1;
+};
+let map = curry$(function (f:any, arr:any) {
+  return arr.map(f);
+});
+let filter = curry$(function (f:any, arr:any) {
+  return arr.filter(f);
+});
+(filter(function (it:any) {
+  return it>2;
+})(map(function (it:any) {
+  return it+2;
+})([1, 2, 3])));
+class Animal {
+  a = 1;
+  b(it?:any) {
+    return 2;
+  }
+  constructor(val:number) {
+    this.a = val;
+  }
+};
+class Dog extends Animal {};
+let dog:Dog = new Dog(1);
+function curry$(f: any, bound?: any){ let context: any, _curry: any = function(args?: any){ return f.length > 1 ? function(){ var params = args ? args.concat() :[]; context = bound ? context || this : this; return params.push.apply(params, arguments) < f.length && arguments.length ? _curry.call(context, params) : f.apply(context, params); } : f; }; return _curry(); }})();
 ```
 
 ## Install
@@ -138,7 +141,7 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   This means you can write
   ```javascript
   require('steel-lang');
-  obj = require('./someFile.s');
+  const obj = require('./someFile.s');
   ```
 
 ### Compile a file/folder
@@ -356,7 +359,6 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   ```
 
 TODO:
-  * Return in each final branch
   * typeof, delete, instanceof, ...
   * Exports
   * Expression as assignable (if, while, ...)
@@ -371,19 +373,16 @@ TODO:
   * index for interface
   * func type for interface
   * abstract
-  * Options for compiler
   * Transpile code in template strings
   * Better scoped variables (bug in 'let')
   * Better error system (more details, more accuracy)
   * Std lib
   * Multiline string
-  * Shebang
   * Better error management for on-the-fly compilation (get rid of typescript-simple)
   * Import native (through options)
   * Add tests for
     - Operation
     - Existance
-    - ChainedCall
     - Function shorthand
     - Import native
     - Full compile

@@ -35,7 +35,7 @@ inst = new A`;
         .then(res => {
           expect(res).to.eq(`class A {
   a = 1;
-  constructor(it?) {
+  constructor(it?:any) {
     1;
   }
   b(a, b) {
@@ -79,15 +79,15 @@ class B: A
         .then(res => {
           expect(res).to.eq(`class A {
   a = 1;
-  b(it?) {
+  b(it?:any) {
     return 2;
   }
 };
 class B extends A {
-  b(it?) {
+  b(it?:any) {
     return super.b();
   }
-  c(it?) {
+  c(it?:any) {
     return d;
   }
 };\n`);

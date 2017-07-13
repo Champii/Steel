@@ -23,6 +23,27 @@ hasNode = (node, symbol) ->
   .map((child) -> child.symbol)
   .includes(symbol)
 
+addReturnRecur = (block) ->
+  lastStatement = _.last block.children
+  content = lastStatement && lastStatement.children[0] || null
+
+  if !content or ['Return', 'Throw'].includes(content.symbol)
+    return
+
+  blocks = content.children.filter -> ['Block', 'ElseIf', 'Else', 'Catch'].includes it.symbol
+
+  blocks = blocks.map ->
+    if ['ElseIf', 'Else', 'Catch'].includes it.symbol
+      return it.children.find -> it.symbol is 'Block'
+
+    return it
+
+  if blocks.length
+    blocks.forEach addReturnRecur
+  else
+    lastStatement.children[0] = createNode 'Return', content, `return ${content.literal}`
+
+
 tokens.FunctionDeclaration = (node) ->
   node.children = visit node.children
 
@@ -31,14 +52,9 @@ tokens.FunctionDeclaration = (node) ->
   if hasNode func, 'NoReturn'
     return node
 
-  block = _.last func.children
-  lastStatement = _.last block.children
-  content = lastStatement && lastStatement.children[0] || null
+  b = _.last func.children
 
-  if !content or ['If', 'Try', 'Return'].includes(content.symbol)
-    return node
-
-  lastStatement.children[0] = createNode 'Return', content, `return ${content.literal}`
+  addReturnRecur b
 
   node
 
