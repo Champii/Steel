@@ -1,26 +1,27 @@
-_            = require 'lodash'
-fs           = require 'fs'
-ts           = require 'typescript'
-hook         = require 'node-hook'
-util         = require 'util'
-path         = require 'path'
-bluebird     = require 'bluebird'
-Vinyl        = require 'vinyl'
-PassThrough  = require 'stream' .PassThrough
-Module       = require 'module'
+require
+  fs: _fs
+  util
+  path
+  vinyl: Vinyl
+  lodash: _
+  module: Module
+  stream: { PassThrough }
+  bluebird
+  typescript: ts
+  'node-hook': hook
 
-preproc      = require './preproc'
-generateAst  = require './generateAst'
-transformAst = require './transformAst'
-transpile    = require './transpile'
-compile      = require './compile'
+  './preproc'
+  './generateAst'
+  './transformAst'
+  './transpile'
+  './compile'
 
 inspect = -> console.log util.inspect it, depth: null
 
 printFileWithLines := string -> void
 printFileWithLines = (content) -> content.split '\n' .forEach (v, i) -> console.log `${i}: ${v}`
 
-fs = bluebird.promisifyAll fs
+fs = bluebird.promisifyAll _fs
 
 interface SteelOptions
   quiet?:      boolean

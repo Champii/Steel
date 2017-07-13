@@ -1,8 +1,9 @@
-_          = require 'lodash'
-fs         = require 'fs'
-util       = require 'util'
-path       = require 'path'
-pegjs      = require 'pegjs'
+require
+  fs
+  util
+  path
+  pegjs
+  lodash: _
 
 grammar    = ''
 

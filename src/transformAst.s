@@ -1,5 +1,6 @@
-_    = require 'lodash'
-util = require 'util'
+require
+  util
+  lodash: _
 
 tokens: any = {}
 

@@ -1,7 +1,8 @@
-_       = require 'lodash'
-ts      = require 'typescript'
-util    = require 'util'
-path    = require 'path'
+require
+  util
+  path
+  lodash: _
+  typescript
 
 tokens: any = {}
 variables   = [[]]
@@ -547,7 +548,7 @@ importCommonJs = (node) ->
   if fromId.children[0].symbol is 'ObjectDestruct'
     destruct = transpile(fromId.children).join('')
     res = ''
-    tmpId = id
+    tmpId = id.replace '-', '_'
 
     if node.children[0].symbol is 'StringLiteral'
       tmpId = getStringBaseName tmpId

@@ -1,4 +1,5 @@
-_ = require 'lodash'
+require
+  lodash
 
 countTabs = (it) ->
   i = 0

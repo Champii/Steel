@@ -1,10 +1,11 @@
-_                 = require 'lodash'
-fs                = require 'fs'
-ts                = require 'typescript'
-path              = require 'path'
-util              = require 'util'
-gts               = require 'gulp-typescript'
-TypeScriptSimple  = require 'typescript-simple' .TypeScriptSimple
+require
+  fs
+  path
+  util
+  lodash: _
+  typescript: ts
+  'gulp-typescript': gts
+  'typescript-simple': { TypeScriptSimple }
 
 compilerOptions =
   target: 'es6'
