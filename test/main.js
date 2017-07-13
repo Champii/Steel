@@ -3,7 +3,7 @@ const Vinyl          = require('vinyl');
 const stream         = require('stream');
 const chaiAsPromised = require('chai-as-promised');
 
-const lightscript    = require('../');
+const steel          = require('../');
 
 const expect         = chai.expect;
 
@@ -14,10 +14,11 @@ describe('Main process', () => {
   describe('Full compile', () => {
 
     it('should process file with no error', (done) => {
+      this.timeout(5000);
       const pair = new Vinyl({ path: '/tmp/test.s', contents: new Buffer(`a = []`)});
       const passStream = new stream.PassThrough({ objectMode: true });
 
-      const outStream = lightscript.transpileStream(passStream);
+      const outStream = steel.transpileStream(passStream);
 
       outStream.on('data', (file) => {
         expect(file.path).to.eq('/tmp/test.js');
@@ -41,10 +42,11 @@ describe('Main process', () => {
     });
 
     it('should process file with error', (done) => {
+      this.timeout(5000);
       const pair = new Vinyl({ path: '/tmp/test.s', contents: new Buffer(`a: number = 'a'`)});
       const passStream = new stream.PassThrough({ objectMode: true });
 
-      const outStream = lightscript.transpileStream(passStream);
+      const outStream = steel.transpileStream(passStream);
 
       outStream.on('data', (file) => {
       });
