@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 (function () {
-    let _ = require('lodash');
-    let fs = require('fs.extra');
-    let argv = require('commander');
-    let path = require('path');
-    let gulp = require('gulp');
-    let steel = require('..');
+    const gulp = require('gulp');
+    const path = require('path');
+    const _ = require('lodash');
+    const fs = require('fs.extra');
+    const argv = require('commander');
+    const steel = require('..');
     let pack = path.resolve(__dirname, '../package.json');
     let version = require(pack).version;
     let printFileWithLines = function (content) {

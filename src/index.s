@@ -18,7 +18,6 @@ require
 
 inspect = -> console.log util.inspect it, depth: null
 
-printFileWithLines := string -> void
 
 fs = bluebird.promisifyAll _fs
 
@@ -29,7 +28,11 @@ interface SteelOptions
   strict?:     boolean
   typescript?: boolean
 
-exports.transpileStream = (stream: NodeJS.ReadWriteStream, options: SteelOptions) ->
+interface SteelFile
+  path: string
+  contents: Buffer
+
+exports.transpileStream = (stream: NodeJS.ReadWriteStream, options: SteelOptions): NodeJS.ReadWriteStream ->
   if not options?
     options = {}
 
@@ -40,7 +43,7 @@ exports.transpileStream = (stream: NodeJS.ReadWriteStream, options: SteelOptions
 
   compile stream, options
 
-exports.transpile = (file, options) ->
+exports.transpile = (file: SteelFile, options: SteelOptions): SteelFile ->
   pair = [path.basename(file.path), file.contents]
 
   # console.log pair
@@ -57,7 +60,7 @@ exports.transpile = (file, options) ->
 
   file
 
-exports._transpileStringToTs = (input) ->
+exports._transpileStringToTs = (input: string): Promise<string> ->
   pair = ['', input]
   preprocessed   = preproc pair
   ast            = generateAst preprocessed
@@ -66,6 +69,6 @@ exports._transpileStringToTs = (input) ->
 
   Promise.resolve transpiled.1
 
-hook.hook '.s', (input, file) ->
+hook.hook '.s', (input: string, file: string) ->
   trans = exports.transpile new Vinyl  path: file, contents: new Buffer input
   compile.file trans

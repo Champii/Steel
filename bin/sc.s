@@ -1,14 +1,16 @@
 #!/usr/bin/env node
-_           = require 'lodash'
-fs          = require 'fs.extra'
-argv        = require 'commander'
-path        = require 'path'
-gulp        = require 'gulp'
-steel       = require '..'
+require
+  gulp
+  path
+  lodash: _
+  'fs.extra': fs
+  commander: argv
+  '..': steel
 
-pack        = path.resolve __dirname, '../package.json'
-version     = require(pack).version
+pack    = path.resolve __dirname, '../package.json'
+version = require(pack).version
 
+printFileWithLines := string -> void
 printFileWithLines = (content) -> content.split '\n' .forEach (v, i) -> console.log `${i}: ${v}`
 
 argv
@@ -31,11 +33,11 @@ if not paths.length
   process.exit!
 
 if not argv.compile and not argv.print
-  require path.resolve './', paths[0]
+  require path.resolve './', paths.0
   return
 
 
-out = steel.transpileStream(gulp.src(paths), argv)
+out = steel.transpileStream gulp.src(paths), argv
 
 if argv.print
   out.on 'data', (file) ->
@@ -48,4 +50,4 @@ if argv.print
 if argv.compile
   if argv.output
     compilePath = argv.output
-  out.pipe(gulp.dest compilePath).on('error', (err) -> process.exit 1)
+  out.pipe(gulp.dest compilePath).on 'error', (err) -> process.exit 1
