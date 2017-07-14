@@ -19,7 +19,6 @@ require
 inspect = -> console.log util.inspect it, depth: null
 
 printFileWithLines := string -> void
-printFileWithLines = (content) -> content.split '\n' .forEach (v, i) -> console.log `${i}: ${v}`
 
 fs = bluebird.promisifyAll _fs
 

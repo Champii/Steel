@@ -158,15 +158,26 @@ tokens.FunctionArgument = (node) ->
 
   arr
 
+tokens.GenericFunctionDeclaration = -> it.literal
+
 functionManage = (node) ->
+  genericsIdx = _.findIndex node.children, -> it.symbol is 'GenericFunctionDeclaration'
+  generics = ''
+
+  if genericsIdx >= 0
+    generics = node.children.splice(genericsIdx, 1).0.literal
+
   pushScope!
   res = transpile node.children
   popScope!
 
-  args = '()'
+  args = `()`
+
   if res.0 and res.0.0 is '('
     args = res.0
     res.shift!
+
+  args = `${generics}${args}`
 
   res = res.map -> `${it}`
   res.push `}`

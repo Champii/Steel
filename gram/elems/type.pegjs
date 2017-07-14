@@ -20,5 +20,12 @@ InlineTypeDeclaration
   { return createNode('InlineTypeDeclaration', [], id); }
 
 Type
+  = TypeName GenericType? "[]"*
+  { return text(); }
+
+GenericType
+  = "<" ws Type ws ">"
+
+TypeName
   = Identifier ('.' Type)?
   { return text(); }

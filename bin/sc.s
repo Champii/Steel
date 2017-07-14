@@ -9,11 +9,14 @@ steel       = require '..'
 pack        = path.resolve __dirname, '../package.json'
 version     = require(pack).version
 
+printFileWithLines = (content) -> content.split '\n' .forEach (v, i) -> console.log `${i}: ${v}`
+
 argv
 .version(version)
 .usage '[options] <files ...>'
 .option '-c, --compile', 'Compile files'
 .option '-p, --print', 'Print files'
+.option '-l, --lines', 'Print files with lines (must have -p)'
 .option '-o, --output <folder>', 'File/folder of output'
 .option '-s, --strict', 'Disallow implicit use of <Any> type'
 .option '-t, --typescript', 'Output Typescript instead of Javascript (no typechecking)'
@@ -37,7 +40,10 @@ out = steel.transpileStream(gulp.src(paths), argv)
 if argv.print
   out.on 'data', (file) ->
     console.log file.path + ':'
-    console.log file.contents.toString!
+    if argv.lines
+      printFileWithLines file.contents.toString!
+    else
+      console.log file.contents.toString!
 
 if argv.compile
   if argv.output

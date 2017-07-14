@@ -249,6 +249,12 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
     foo!
     ```
 
+* Generics
+  ```livescript
+  map = <T>(f: any, arr: T[]): T[] -> arr.map f
+  map (+ 2), [1, 2, 3]
+  ```
+
 * Curry operator
   ```livescript
   # Exists for arrow function : '~~>'
@@ -373,6 +379,8 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   You can use `require` instead of `import` to make a regular require
 
 TODO:
+  * fix bug with $curry that swallows arguments type
+  * generics specification on func call (map<number>(f, arr))
   * decimals
   * return loops
   * typeof, delete, instanceof, ...
@@ -402,6 +410,7 @@ TODO:
     - Import native
     - Full compile
     - Comments
+    - Generics / array type
   * Support tsconfig.json
   * (Plugin system ?)
   * |< operator for chained call with flipped arguments

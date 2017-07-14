@@ -1,5 +1,6 @@
 FunctionDeclaration "FunctionDeclaration"
-  = args:FunctionArguments?
+  = generics:GenericFunctionDeclaration?
+    args:FunctionArguments?
     ws noReturn: "!"? ws
     template:(
       FunctionExpressionCurry
@@ -8,7 +9,15 @@ FunctionDeclaration "FunctionDeclaration"
     / ArrowFunction
     )
     body:FunctionBlock
-  { return FunctionDeclaration(args, noReturn, template, body); }
+  { return FunctionDeclaration(args, noReturn, template, body, generics); }
+
+GenericFunctionDeclaration
+  = "<" ws GenericFunctionDeclarationRecur ws ">"
+  { return createNode('GenericFunctionDeclaration', [], text()); }
+
+GenericFunctionDeclarationRecur
+  = Identifier (Coma GenericFunctionDeclarationRecur)?
+  { return text(); }
 
 FunctionExpression "FunctionExpression"
   = ws "->" ws

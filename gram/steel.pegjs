@@ -13,7 +13,7 @@
     return `${identifier} = ${assignable}`;
   };
 
-  const FunctionDeclaration = (args, noReturn, template, body) => {
+  const FunctionDeclaration = (args, noReturn, template, body, generics) => {
     if (noReturn != null) {
       noReturn = createNode('NoReturn', [], '!');
     }
@@ -23,7 +23,7 @@
       args = createNode('FunctionArguments', [argId]);
     }
 
-    template.children.push(args, noReturn, body);
+    template.children.push(args, noReturn, generics, body);
 
     template.children = _.compact(template.children);
 
