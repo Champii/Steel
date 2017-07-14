@@ -20,7 +20,7 @@ addVariable = (vari) -> variables[variables.length - 1].push vari
 tokens.TypeAssignation = (node) ->
   res = transpile node.children
 
-  variable = res.shift()
+  variable = res.shift!
 
   types[variable] = res.0
 
@@ -44,6 +44,8 @@ tokens.Statement = (node) ->
     return text
 
   `${text};\n`
+
+tokens.InlineTypeDeclaration = -> it.literal
 
 applyTypes = (type, node) ->
   if type.length is 1
@@ -172,9 +174,9 @@ functionManage = (node) ->
 
   [args, res]
 
-tokens.FunctionReturnType = (node) ->
-  res = transpile node.children
-  res.join ''
+# tokens.FunctionReturnType = (node) ->
+#   res = transpile node.children
+#   res.join ''
 
 tokens.FunctionExpression = (node) ->
   [args, res] = functionManage node

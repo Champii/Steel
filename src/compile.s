@@ -47,6 +47,6 @@ module.exports = (stream, options) ->
 
 module.exports.file = (file) ->
   try
-    return tss.compile file.contents.toString!
+    tss.compile file.contents.toString!
   catch e
     console.log e.message

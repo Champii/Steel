@@ -35,8 +35,8 @@ FunctionArguments "FunctionArguments"
 
 FunctionReturnType
   = Colon
-    id:Identifier
-  { return createNode('FunctionReturnType', id); }
+    id:Type
+  { return createNode('FunctionReturnType', [], id); }
 
 FunctionArgument "FunctionArgument"
   = head:Identifier

@@ -12,16 +12,13 @@ TypeExpression
 FunctionTypeExpression
   = ws "->" ws
     id:Type
-  { return id; }
+  { return createNode('InlineTypeDeclaration', [], id); }
 
 InlineTypeDeclaration
   = ws ":" ws
     id:Type
-  { return id; }
+  { return createNode('InlineTypeDeclaration', [], id); }
 
 Type
-  = type:(
-      (Identifier Dot Type) { return text(); }
-    / Identifier
-    )
-  { return type; }
+  = Identifier ('.' Type)?
+  { return text(); }

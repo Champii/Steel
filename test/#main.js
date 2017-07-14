@@ -63,7 +63,7 @@ describe('Main process', () => {
       const pair = new Vinyl({ path: '/tmp/test.s', contents: new Buffer(`a: number = 'a'`)});
       const passStream = new stream.PassThrough({ objectMode: true });
 
-      const outStream = steel.transpileStream(passStream);
+      const outStream = steel.transpileStream(passStream, { quiet: true });
 
       outStream.on('data', (file) => {
       });

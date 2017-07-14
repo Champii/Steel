@@ -30,7 +30,7 @@ interface SteelOptions
   strict?:     boolean
   typescript?: boolean
 
-exports.transpileStream = (stream, options: SteelOptions) ->
+exports.transpileStream = (stream: NodeJS.ReadWriteStream, options: SteelOptions) ->
   if not options?
     options = {}
 
