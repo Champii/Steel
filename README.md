@@ -46,8 +46,8 @@ bar = (c: number, d: number): number ~>
 
 nonReturning = !-> 1
 
-map    = (f: any, arr: any) --> arr.map f
-filter = (f: any, arr: any) --> arr.filter f
+map    = <T>(f: (x: T): T, arr: T[]): T[] --> arr.map f
+filter = <T>(f: (x: T): T, arr: T[]): T[] --> arr.filter f
 
 [1, 2, 3]
   |> map (+ 2)

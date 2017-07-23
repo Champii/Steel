@@ -36,6 +36,20 @@ describe('Types', () => {
       ;
     });
 
+    it('should declare a typed func with func arg', () => {
+      const string = `foo = (a: (a: number): number, b: string): number -> a`;
+      const promise = lightscript._transpileStringToTs(string);
+
+      return expect(promise).to.be.fulfilled
+        .then(res => {
+          expect(res).to.eq(`let foo = function (a:(a: number)=> number, b:string): number {
+  return a;
+};
+`);
+        })
+      ;
+    });
+
   });
 
   describe('Externalized', () => {
