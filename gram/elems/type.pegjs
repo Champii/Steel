@@ -20,8 +20,14 @@ InlineTypeDeclaration
   { return createNode('InlineTypeDeclaration', [], id); }
 
 Type
-  = TypeName GenericType? "[]"*
+  = FuncType / (TypeName GenericType? "[]"*)
   { return text(); }
+
+FuncType
+  = args:( "(" ws FunctionArgument? ws ")" { return text(); } )
+    returnType:(FunctionReturnType? { return text().replace(':', '=>')})
+  { return args + (returnType || ''); }
+  // { return createNode('FuncType', type.children); }
 
 GenericType
   = "<" ws Type ws ">"
