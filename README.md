@@ -29,7 +29,7 @@ At term, this language aim to be more functional, and might borrow some concepts
 ### Basics
 
 ```livescript
-import
+require
   fs
   path: { resolve }
   './localFile'
@@ -67,11 +67,11 @@ Transpiled in TypeScript with `sc -cts source.s` turns into:
 
 ```typescript
 (function () {
-  import fs = require('fs');
-  import _path = require('path');
+  const fs = require('fs');
+  const _path = require('path');
   let {resolve} = _path;
-  import localFile = require('./localFile');
-  import customName = require('./localFile2');
+  const localFile = require('./localFile');
+  const customName = require('./localFile2');
   let foo:(a:number,b:number) => number = function (a, b) {
     return a + b;
   };
@@ -85,10 +85,10 @@ Transpiled in TypeScript with `sc -cts source.s` turns into:
   let nonReturning = function (it?:any) {
     1;
   };
-  let map = curry$(function (f:any, arr:any) {
+  let map = curry$(function <T>(f:(x: T)=> T, arr:T[]): T[] {
     return arr.map(f);
   });
-  let filter = curry$(function (f:any, arr:any) {
+  let filter = curry$(function <T>(f:(x: T)=> T, arr:T[]): T[] {
     return arr.filter(f);
   });
   (filter(function (it:any) {
@@ -163,7 +163,7 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
   sc -c folder/**/*.s
   ```
 
-  The format of the path is the same as for gulp. If you want to compile recursively or exclude some folders for exemple.
+  The path use the same format as gulp. You can compile recursively or exclude some folders.
 
 ### Compile to a diferent output
   ```bash
@@ -251,7 +251,7 @@ Compiler name is `sc`, and stands for `Steel Compiler`.
 
 * Generics
   ```livescript
-  map = <T>(f: any, arr: T[]): T[] -> arr.map f
+  map = <T>(f: (x: T): T, arr: T[]): T[] -> arr.map f
   map (+ 2), [1, 2, 3]
   ```
 
