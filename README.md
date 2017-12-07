@@ -20,7 +20,7 @@ This language tries to implement strong static typing over a subset of Livescrip
 To do so, it transpile first to TypeScript, and let it transpile to Javascript.
 This allow to use the power of a well typed and designed language while smoothing its syntax.
 
-It alse tries not to fall into the same 'over-simplification' Livescript does, and avoid to implement features complexifying the read and understanding of the code.
+It alse tries not to fall into the same 'over-simplification' Livescript does, and avoid to implement features complexifying the reading and understanding of the code.
 
 At term, this language aim to be more functional, and might borrow some concepts from language like Haskell or Ocaml (custom operator?, immutability?, infinite lists?, ...).
 
@@ -30,34 +30,44 @@ At term, this language aim to be more functional, and might borrow some concepts
 
 ```livescript
 require
-  fs
-  path: { resolve }
-  './localFile'
-  './localFile2': customName
+  fs                           # require fs as a whole
+  path: { resolve }            # require path but use only resolve
+  './localFile'                # require a local file
+  './localFile2': customName   # same but with a custom name
 
+# external type declaration
 foo := number -> number -> number
 foo = (a, b) -> a + b
 
+# inline type declaration
 bar = (c: number, d: number): number ~>
   if c? and d? and d isnt 0
     c + d
   else
     0
 
+# returns undefined
 nonReturning = !-> 1
 
+# inline type declaration with templating and currying
 map    = <T>(f: (x: T): T, arr: T[]): T[] --> arr.map f
-filter = <T>(f: (x: T): T, arr: T[]): T[] --> arr.filter f
 
+# external type declaration with templating and currying (alpha)
+filter = <T> => (T -> T) -> T[] -> T[]
+filter = (f, arr) --> arr.filter f
+
+# call chaining and function shorthand
 [1, 2, 3]
-  |> map (+ 2)
+  |> map (+ 2)     # stands for map(it => it + 2)
   |> filter (> 2)
 
+# Class
 class Animal
   a: 1
   b: -> 2
   constructor: (val: number) -> @a = val
 
+# Inheritance
 class Dog: Animal
 
 dog: Dog = new Dog 1
