@@ -53,7 +53,7 @@ nonReturning = !-> 1
 map    = <T>(f: (x: T): T, arr: T[]): T[] --> arr.map f
 
 # external type declaration with templating and currying (alpha)
-filter = <T> => (T -> T) -> T[] -> T[]
+filter := <T> => (T -> T) -> T[] -> T[]
 filter = (f, arr) --> arr.filter f
 
 # call chaining and function shorthand
